@@ -4,4 +4,4 @@ class NearNumber {
 	__intn m;
 	__intn e;
 };
-typedef NearNumber ntuple;
+typedef NearNumber __floatn;

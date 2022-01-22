@@ -2,6 +2,6 @@
 #include"NearNumber.h"
 int main(void) {
 	__intn x;
-	std::cout << (bool)x;
+	std::cout << (char)x;
 	return 0;
 }

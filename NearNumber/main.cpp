@@ -2,6 +2,6 @@
 #include"NearNumber.h"
 int main(void) {
 	__intn x;
-	std::cout << x.mantissa().size();
+	std::cout << (bool)x;
 	return 0;
 }

@@ -1,2 +1,7 @@
 #include<iostream>
-int main(void) { return 0; }
+#include"NearNumber.h"
+int main(void) {
+	__intn x;
+	std::cout << x.mantissa().size();
+	return 0;
+}

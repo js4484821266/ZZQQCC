@@ -3,7 +3,7 @@
 #include<vector>
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
-#define SGN(x) ((x)>=0?intmax_t(1):~intmax_t(0))
+#define SGN(x) ((x)>=0?intmax_t(1):-intmax_t(1))
 #define BOOLSGN(x) ((x)<0)
 #define ABS(x) ((x)>=0?(x):-(x))
 typedef std::vector<uint8_t> mantissat;
@@ -13,54 +13,75 @@ class BigInteger {
 public:
 	intmax_t sgn(void) const { return 1 - 2 * (intmax_t)s; }
 	bool boolsgn(void)const { return s; }
-	BigInteger& clean(void) {
+	BigInteger& fit(void) {
 		for (size_t t = 1; t < m.size(); t++)if (!m[m.size() - t])m.pop_back();
 		return*this;
 	}
-	mantissat mantissa(void) { clean(); return m; }
+	mantissat mantissa(void)const { return m; }
 	BigInteger& operator=(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
-	template<typename Ex_xEZ>Ex_xEZ& operator=(Ex_xEZ& x) {
-		Ex_xEZ t = ABS(x);
+	intmax_t& operator=(intmax_t& x) {
+		intmax_t t = ABS(x);
 		s = BOOLSGN(x);
 		m.clear();
-		for (size_t u = 0; u < sizeof(Ex_xEZ); u++)m.push_back((t >> (8 * u)) & 0xff);
-		clean();
+		for (size_t u = 0; u < sizeof(intmax_t); u++)m.push_back((t >> (8 * u)) & 0xff);
+		fit();
 		return x;
 	}
-	operator bool() {
+	BigInteger(BigInteger& x) { operator=(x); }
+	BigInteger(intmax_t x = 0) { operator=(x); }
+	operator int()const {
+		int x = 0;
+		for (size_t t = 0; t < MIN(m.size(), sizeof(int)); t++)x |= ((intmax_t)m[t] << (8 * t));
+		return x;
+	}
+	operator bool() const {
 		for (size_t t = 0; t < m.size(); t++)if (m[t])return true;
 		return false;
 	}
-	operator char() { return(m.size() ? m[0] : 0); }
-	operator intmax_t() {
-		intmax_t x = 0;
-		for (size_t t = 0; t < MIN(m.size(), sizeof(intmax_t)); t++)x |= (m[t] << (8 * t));
+	operator char() const { return(m.size() ? m[0] : 0); }
+	operator short()const {
+		short x = 0;
+		for (size_t t = 0; t < MIN(m.size(), 2); t++)x |= ((intmax_t)m[t] << (8 * t));
 		return x;
 	}
-	bool operator!() { return !operator bool(); }
-	bool operator&&(BigInteger x) { return operator bool() && (bool)x; }
-	template<typename Ax>bool operator&&(Ax x) { return operator bool() && !!x; }
-	bool operator||(BigInteger x) { return operator bool() || (bool)x; }
-	template<typename Ax>bool operator||(Ax x) { return operator bool() || !!x; }
-	BigInteger operator+() { return*this; }
-	bool operator==(BigInteger x) {
+	operator long()const {
+		long x = 0;
+		for (size_t t = 0; t < MIN(m.size(), 4); t++)x |= ((intmax_t)m[t] << (8 * t));
+		return x;
 	}
-	bool operator>(BigInteger x);
-	bool operator<(BigInteger x);
-	bool operator!=(BigInteger x);
-	bool operator>=(BigInteger x);
-	bool operator<=(BigInteger x);
-	BigInteger operator~();
-	BigInteger operator&(BigInteger x);
-	BigInteger operator|(BigInteger x);
-	BigInteger operator^(BigInteger x);
-	BigInteger operator<<(BigInteger x);
-	BigInteger operator>>(BigInteger x);
-	BigInteger operator+(BigInteger x);
-	BigInteger operator-(BigInteger x);
-	BigInteger operator*(BigInteger x);
-	BigInteger operator/(BigInteger x);
-	BigInteger operator%(BigInteger x);
-	BigInteger operator-();
+	operator long long()const {
+		long long x = 0;
+		for (size_t t = 0; t < MIN(m.size(), 8); t++)x |= ((intmax_t)m[t] << (8 * t));
+		return x;
+	}
+	operator unsigned int()const { return (unsigned int)(int)*this; }
+	operator unsigned char()const { return (unsigned char)(char)*this; }
+	operator unsigned short()const { return (unsigned short)(short)*this; }
+	operator unsigned long()const { return(unsigned long)(long)*this; }
+	operator unsigned long long()const { return(unsigned long long)(long long) * this; }
+	bool operator!() const { return !operator bool(); }
+	bool operator&&(BigInteger x)const { return operator bool() && (bool)x; }
+	template<typename Ax>bool operator&&(Ax x) const { return operator bool() && !!x; }
+	bool operator||(BigInteger x) const { return operator bool() || (bool)x; }
+	template<typename Ax>bool operator||(Ax x)const { return operator bool() || !!x; }
+	BigInteger operator+()const;
+	bool operator==(BigInteger x)const;
+	bool operator>(BigInteger x)const;
+	bool operator<(BigInteger x)const;
+	bool operator!=(BigInteger x)const;
+	bool operator>=(BigInteger x)const;
+	bool operator<=(BigInteger x)const;
+	BigInteger operator~()const;
+	BigInteger operator&(BigInteger x)const;
+	BigInteger operator|(BigInteger x)const;
+	BigInteger operator^(BigInteger x)const;
+	BigInteger operator<<(BigInteger x)const;
+	BigInteger operator>>(BigInteger x)const;
+	BigInteger operator+(BigInteger x)const;
+	BigInteger operator-(BigInteger x)const;
+	BigInteger operator*(BigInteger x)const;
+	BigInteger operator/(BigInteger x)const;
+	BigInteger operator%(BigInteger x)const;
+	BigInteger operator-()const;
 };
 typedef BigInteger __intn;

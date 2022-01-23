@@ -1,59 +1,66 @@
 #pragma once
 #include<cstdint>
 #include<vector>
-#define max(a,b) ((a)>(b)?(a):(b))
-#define min(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define SGN(x) ((x)>=0?intmax_t(1):~intmax_t(0))
+#define BOOLSGN(x) ((x)<0)
+#define ABS(x) ((x)>=0?(x):-(x))
 typedef std::vector<uint8_t> mantissat;
 class BigInteger {
-	typedef BigInteger nnn;
 	bool s = 0;
 	mantissat m;
 public:
-	bool sgn(void) { return s; }
-	mantissat mantissa(void) { return m; }
-	nnn& clean(void) {
+	intmax_t sgn(void) const { return 1 - 2 * (intmax_t)s; }
+	bool boolsgn(void)const { return s; }
+	BigInteger& clean(void) {
 		for (size_t t = 1; t < m.size(); t++)if (!m[m.size() - t])m.pop_back();
 		return*this;
 	}
-	nnn& operator=(nnn x) { s = x.sgn(); m = x.mantissa(); return x; }
-	/* "Ex_xEZ" means "there exists x so that x is an element of Z." */
-	template<typename Ex_xEZ>Ex_xEZ& operator=(Ex_xEZ x);
+	mantissat mantissa(void) { clean(); return m; }
+	BigInteger& operator=(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
+	template<typename Ex_xEZ>Ex_xEZ& operator=(Ex_xEZ& x) {
+		Ex_xEZ t = ABS(x);
+		s = BOOLSGN(x);
+		m.clear();
+		for (size_t u = 0; u < sizeof(Ex_xEZ); u++)m.push_back((t >> (8 * u)) & 0xff);
+		clean();
+		return x;
+	}
 	operator bool() {
-		bool u = false;
-		for (size_t t = 0; t < m.size(); t++)u = (u || m[t]);
-		return u;
+		for (size_t t = 0; t < m.size(); t++)if (m[t])return true;
+		return false;
 	}
 	operator char() { return(m.size() ? m[0] : 0); }
-	template<typename Ex_xEZ>operator Ex_xEZ() {
-		Ex_xEZ x = 0;
-		for (size_t t = 0; t < min(m.size(), sizeof(Ex_xEZ)); t++)x |= (m[t] << (8 * t));
+	operator intmax_t() {
+		intmax_t x = 0;
+		for (size_t t = 0; t < MIN(m.size(), sizeof(intmax_t)); t++)x |= (m[t] << (8 * t));
 		return x;
 	}
 	bool operator!() { return !operator bool(); }
-	bool operator&&(nnn x) { return operator bool() && (bool)x; }
+	bool operator&&(BigInteger x) { return operator bool() && (bool)x; }
 	template<typename Ax>bool operator&&(Ax x) { return operator bool() && !!x; }
-	bool operator||(nnn x) { return operator bool() || (bool)x; }
+	bool operator||(BigInteger x) { return operator bool() || (bool)x; }
 	template<typename Ax>bool operator||(Ax x) { return operator bool() || !!x; }
-	nnn operator+() { return*this; }
-	bool operator==(nnn x) {
-
+	BigInteger operator+() { return*this; }
+	bool operator==(BigInteger x) {
 	}
-	bool operator>(nnn x);
-	bool operator<(nnn x);
-	bool operator!=(nnn x);
-	bool operator>=(nnn x);
-	bool operator<=(nnn x);
-	nnn operator~();
-	nnn operator&(nnn x);
-	nnn operator|(nnn x);
-	nnn operator^(nnn x);
-	nnn operator<<(nnn x);
-	nnn operator>>(nnn x);
-	nnn operator+(nnn x);
-	nnn operator-(nnn x);
-	nnn operator*(nnn x);
-	nnn operator/(nnn x);
-	nnn operator%(nnn x);
-	nnn operator-();
+	bool operator>(BigInteger x);
+	bool operator<(BigInteger x);
+	bool operator!=(BigInteger x);
+	bool operator>=(BigInteger x);
+	bool operator<=(BigInteger x);
+	BigInteger operator~();
+	BigInteger operator&(BigInteger x);
+	BigInteger operator|(BigInteger x);
+	BigInteger operator^(BigInteger x);
+	BigInteger operator<<(BigInteger x);
+	BigInteger operator>>(BigInteger x);
+	BigInteger operator+(BigInteger x);
+	BigInteger operator-(BigInteger x);
+	BigInteger operator*(BigInteger x);
+	BigInteger operator/(BigInteger x);
+	BigInteger operator%(BigInteger x);
+	BigInteger operator-();
 };
 typedef BigInteger __intn;

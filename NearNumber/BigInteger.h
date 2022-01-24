@@ -18,27 +18,20 @@ public:
 		return*this;
 	}
 	mantissat mantissa(void)const { return m; }
-	BigInteger& operator=(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
-	intmax_t& operator=(intmax_t& x) {
-		intmax_t t = ABS(x);
-		s = BOOLSGN(x);
-		m.clear();
-		for (size_t u = 0; u < sizeof(intmax_t); u++)m.push_back((t >> (8 * u)) & 0xff);
-		fit();
-		return x;
+	auto size(void)const { return m.size(); }
+	/* "Ex_xEZ" means "there exists x so that x is an integer." */
+	template<typename Ex_xEZ=uintmax_t>Ex_xEZ& operator=(Ex_xEZ& x) {
+		s = SGN(x); m.clear();
+		for (size_t u = 0; u < sizeof(Ex_xEZ); u++)m.push_back((ABS(x) >> (8 * u)) & 0xff);
+		fit(); return x;
 	}
-	BigInteger(BigInteger& x) { operator=(x); }
-	BigInteger(intmax_t x = 0) { operator=(x); }
-	operator int()const {
-		int x = 0;
-		for (size_t t = 0; t < MIN(m.size(), sizeof(int)); t++)x |= ((intmax_t)m[t] << (8 * t));
-		return x;
-	}
+	template<>BigInteger& operator=<BigInteger>(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
+	template<typename Ex_xEZ>BigInteger(Ex_xEZ& x) { operator=(x); }
+	operator char() const { return(m.size() ? m[0] : 0); }
 	operator bool() const {
 		for (size_t t = 0; t < m.size(); t++)if (m[t])return true;
 		return false;
 	}
-	operator char() const { return(m.size() ? m[0] : 0); }
 	operator short()const {
 		short x = 0;
 		for (size_t t = 0; t < MIN(m.size(), 2); t++)x |= ((intmax_t)m[t] << (8 * t));
@@ -54,11 +47,16 @@ public:
 		for (size_t t = 0; t < MIN(m.size(), 8); t++)x |= ((intmax_t)m[t] << (8 * t));
 		return x;
 	}
-	operator unsigned int()const { return (unsigned int)(int)*this; }
+	operator int()const {
+		int x = 0;
+		for (size_t t = 0; t < MIN(m.size(), sizeof(int)); t++)x |= ((intmax_t)m[t] << (8 * t));
+		return x;
+	}
 	operator unsigned char()const { return (unsigned char)(char)*this; }
 	operator unsigned short()const { return (unsigned short)(short)*this; }
 	operator unsigned long()const { return(unsigned long)(long)*this; }
 	operator unsigned long long()const { return(unsigned long long)(long long) * this; }
+	operator unsigned int()const { return (unsigned int)(int)*this; }
 	bool operator!() const { return !operator bool(); }
 	bool operator&&(BigInteger x)const { return operator bool() && (bool)x; }
 	template<typename Ax>bool operator&&(Ax x) const { return operator bool() && !!x; }

@@ -25,7 +25,7 @@ public:
 		for (size_t u = 0; u < sizeof(Ex_xEZ); u++)m.push_back((ABS(x) >> (8 * u)) & 0xff);
 		fit(); return x;
 	}
-	template<>BigInteger& operator=<BigInteger>(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
+	template<>BigInteger& operator=(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
 	template<typename Ex_xEZ>BigInteger(Ex_xEZ& x) { operator=(x); }
 	operator char() const { return(m.size() ? m[0] : 0); }
 	operator bool() const {

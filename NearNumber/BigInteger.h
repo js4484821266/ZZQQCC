@@ -26,7 +26,13 @@ public:
 		fit(); return x;
 	}
 	template<>BigInteger& operator=<BigInteger>(BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
+	BigInteger(void) { operator=(0); }
 	template<typename Ex_xEZ>BigInteger(Ex_xEZ& x) { operator=(x); }
+	template<typename Ex_xEZ>operator Ex_xEZ()const {
+		Ex_xEZ x = 0;
+		for (size_t t = 0; t < MIN(m.size(), sizeof(Ex_xEZ)); t++)x |= (Ex_xEZ(m[t]) << (8 * t));
+		return x * sgn();
+	}
 	operator char() const { return(m.size() ? m[0] : 0); }
 	operator bool() const {
 		for (size_t t = 0; t < m.size(); t++)if (m[t])return true;

@@ -9,34 +9,29 @@ class BigInteger {
 	bool s = 0;
 	mantissat m;
 	void fit(void) {
-		for (
-			size_t t = 1; 
-			!m[m.size() - t];
-			t++
-			)
-			m.pop_back();
-		if (
-			!m.size()
-			)
-			m.push_back(0);
+		while (m.size())
+			if (!m.back())
+				m.pop_back();
+			else
+				break;
 	}
 public:
-	intmax_t sgn(void) const { 
+	intmax_t sgn(void) const {
 		return 1 - 2 * (intmax_t)s;
 	}
 	bool boolsgn(void)const {
 		return s;
 	}
-	const mantissat& mantissa(void)const { 
+	const mantissat& mantissa(void)const {
 		return m;
 	}
-	size_t size(void)const { 
-		return m.size(); 
+	size_t size(void)const {
+		return m.size();
 	}
 	BigInteger& operator=(BigInteger& x) {
-		s = x.boolsgn(); 
+		s = x.boolsgn();
 		m = x.mantissa();
-		return x; 
+		return x;
 	}
 	/* "Ex_xEZ" means "there exists x so that x is an integer." */
 	template<typename Ex_xEZ>
@@ -57,21 +52,23 @@ public:
 	BigInteger(void) {
 		operator=(0);
 	}
-	BigInteger(BigInteger& x) { 
-		operator=(x); 
+	BigInteger(BigInteger& x) {
+		operator=(x);
 	}
 	/* "Ex_xEZ" means "there exists x so that x is an integer." */
 	template<typename Ex_xEZ>
 	BigInteger(Ex_xEZ& x) {
 		operator=(x);
 	}
-	operator char() const { 
+	operator char() const {
 		return(m.size() ? m[0] : 0);
 	}
 	operator bool() const {
-		for (size_t t = 0;
+		for (
+			size_t t = 0;
 			t < m.size();
-			t++)
+			t++
+			)
 			if (m[t])
 				return true;
 		return false;
@@ -80,9 +77,11 @@ public:
 	template<typename Ex_xEZ>
 	operator Ex_xEZ()const {
 		Ex_xEZ x = 0;
-		for (size_t t = 0;
+		for (
+			size_t t = 0;
 			t < MIN(m.size(), sizeof(Ex_xEZ));
-			t++)
+			t++
+			)
 			x |= (Ex_xEZ(m[t]) << (8 * t));
 		return x * sgn();
 	}
@@ -97,12 +96,12 @@ public:
 	bool operator&&(Ax x) const {
 		return operator bool() && !!x;
 	}
-	bool operator||(BigInteger x) const { 
+	bool operator||(BigInteger x) const {
 		return operator bool() || (bool)x;
 	}
 	/* "Ax" means "for all x so that x is an integer." */
 	template<typename Ax>
-	bool operator||(Ax x)const { 
+	bool operator||(Ax x)const {
 		return operator bool() || !!x;
 	}
 	bool operator==(BigInteger x)const;

@@ -8,73 +8,110 @@ typedef std::vector<uint8_t> mantissat;
 class BigInteger {
 	bool s = 0;
 	mantissat m;
+	void fit(void) {
+		for (
+			size_t t = 1; 
+			!m[m.size() - t];
+			t++
+			)
+			m.pop_back();
+		if (
+			!m.size()
+			)
+			m.push_back(0);
+	}
 public:
-	intmax_t sgn(void) const { return 1 - 2 * (intmax_t)s; }
-	bool boolsgn(void)const { return s; }
-	BigInteger& fit(void) {
-		for (size_t t = 1; t < m.size(); t++)if (!m[m.size() - t])m.pop_back();
-		return*this;
+	intmax_t sgn(void) const { 
+		return 1 - 2 * (intmax_t)s;
 	}
-	mantissat mantissa(void)const { return m; }
-	auto size(void)const { return m.size(); }
-	/* "Ex_xEZ" means "there exists x so that x is an integer." */
-	template<typename Ex_xEZ>Ex_xEZ& operator=( Ex_xEZ& x) {
-		s = (x < 0); m.clear();
-		for (size_t t = 0; t < sizeof(Ex_xEZ); t++)m.push_back(uint8_t(ABS(x) >> (8 * t)));
-		fit(); return x;
+	bool boolsgn(void)const {
+		return s;
 	}
-	template<>BigInteger& operator=<BigInteger>( BigInteger& x) { s = x.boolsgn(); m = x.mantissa(); return x; }
-	BigInteger(void) { operator=(0); }
-	/* "Ex_xEZ" means "there exists x so that x is an integer." */
-	template<typename Ex_xEZ>BigInteger(Ex_xEZ& x) { operator=(x); }
-	/* "Ex_xEZ" means "there exists x so that x is an integer." */
-	template<typename Ex_xEZ>operator Ex_xEZ()const {
-		Ex_xEZ x = 0;
-		for (size_t t = 0; t < MIN(m.size(), sizeof(Ex_xEZ)); t++)x |= (Ex_xEZ(m[t]) << (8 * t));
-		return x * sgn();
+	const mantissat& mantissa(void)const { 
+		return m;
 	}
-	operator char() const { return(m.size() ? m[0] : 0); }
+	size_t size(void)const { 
+		return m.size(); 
+	}
+	BigInteger& operator=(BigInteger& x) {
+		s = x.boolsgn(); 
+		m = x.mantissa();
+		return x; 
+	}
+	/* "Ex_xEZ" means "there exists x so that x is an integer." */
+	template<typename Ex_xEZ>
+	const Ex_xEZ& operator=(const Ex_xEZ& x) {
+		s = (x < 0);
+		m.clear();
+		for (
+			size_t t = 0;
+			t < sizeof(Ex_xEZ);
+			t++
+			)
+			m.push_back(
+				uint8_t(ABS(x) >> (8 * t))
+			);
+		fit();
+		return x;
+	}
+	BigInteger(void) {
+		operator=(0);
+	}
+	BigInteger(BigInteger& x) { 
+		operator=(x); 
+	}
+	/* "Ex_xEZ" means "there exists x so that x is an integer." */
+	template<typename Ex_xEZ>
+	BigInteger(Ex_xEZ& x) {
+		operator=(x);
+	}
+	operator char() const { 
+		return(m.size() ? m[0] : 0);
+	}
 	operator bool() const {
-		for (size_t t = 0; t < m.size(); t++)if (m[t])return true;
+		for (size_t t = 0;
+			t < m.size();
+			t++)
+			if (m[t])
+				return true;
 		return false;
 	}
-	operator short()const {
-		short x = 0;
-		for (size_t t = 0; t < MIN(m.size(), 2); t++)x |= ((intmax_t)m[t] << (8 * t));
-		return x;
+	/* "Ex_xEZ" means "there exists x so that x is an integer." */
+	template<typename Ex_xEZ>
+	operator Ex_xEZ()const {
+		Ex_xEZ x = 0;
+		for (size_t t = 0;
+			t < MIN(m.size(), sizeof(Ex_xEZ));
+			t++)
+			x |= (Ex_xEZ(m[t]) << (8 * t));
+		return x * sgn();
 	}
-	operator long()const {
-		long x = 0;
-		for (size_t t = 0; t < MIN(m.size(), 4); t++)x |= ((intmax_t)m[t] << (8 * t));
-		return x;
+	bool operator!() const {
+		return !operator bool();
 	}
-	operator long long()const {
-		long long x = 0;
-		for (size_t t = 0; t < MIN(m.size(), 8); t++)x |= ((intmax_t)m[t] << (8 * t));
-		return x;
+	bool operator&&(BigInteger x)const {
+		return operator bool() && (bool)x;
 	}
-	operator int()const {
-		int x = 0;
-		for (size_t t = 0; t < MIN(m.size(), sizeof(int)); t++)x |= ((intmax_t)m[t] << (8 * t));
-		return x;
+	/* "Ax" means "for all x so that x is an integer." */
+	template<typename Ax>
+	bool operator&&(Ax x) const {
+		return operator bool() && !!x;
 	}
-	operator unsigned char()const { return (unsigned char)(char)*this; }
-	operator unsigned short()const { return (unsigned short)(short)*this; }
-	operator unsigned long()const { return(unsigned long)(long)*this; }
-	operator unsigned long long()const { return(unsigned long long)(long long) * this; }
-	operator unsigned int()const { return (unsigned int)(int)*this; }
-	bool operator!() const { return !operator bool(); }
-	bool operator&&(BigInteger x)const { return operator bool() && (bool)x; }
-	template<typename Ax>bool operator&&(Ax x) const { return operator bool() && !!x; }
-	bool operator||(BigInteger x) const { return operator bool() || (bool)x; }
-	template<typename Ax>bool operator||(Ax x)const { return operator bool() || !!x; }
-	BigInteger operator+()const;
+	bool operator||(BigInteger x) const { 
+		return operator bool() || (bool)x;
+	}
+	/* "Ax" means "for all x so that x is an integer." */
+	template<typename Ax>
+	bool operator||(Ax x)const { 
+		return operator bool() || !!x;
+	}
 	bool operator==(BigInteger x)const;
 	bool operator>(BigInteger x)const;
 	bool operator<(BigInteger x)const;
 	bool operator!=(BigInteger x)const;
 	bool operator>=(BigInteger x)const;
 	bool operator<=(BigInteger x)const;
+	BigInteger operator+()const;
 	BigInteger operator~()const;
 	BigInteger operator&(BigInteger x)const;
 	BigInteger operator|(BigInteger x)const;

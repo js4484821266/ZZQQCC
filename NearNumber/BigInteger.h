@@ -3,7 +3,7 @@
 #include<vector>
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
-#define SGN(x) ((x)<0?-1:1)
+#define SGN(x) ((x)<0?intmax_t(-1):intmax_t(1))
 #define ABS(x) ((x)*SGN(x))
 class BigInteger {
 	bool s = 0;
@@ -23,6 +23,7 @@ class BigInteger {
 	}
 
 public:
+
 	intmax_t sgn(void) const {
 		return 1 - 2 * (intmax_t)s;
 	}
@@ -45,18 +46,18 @@ public:
 		return x;
 	}
 
-	/* "ExEZ" means "there exists x which is an integer." */
+	/* "ExEZ" means "there exists x, an integer." */
 	template<typename ExEZ>
 	const ExEZ& operator=(const ExEZ& x) {
 		s = (x < 0);
 		m.clear();
 		for (
 			size_t t = 0;
-			t < sizeof(ExEZ);
+			t < sizeof(ExEZ) / sizeof(digitt);
 			t++
 			)
 			m.push_back(
-				digitt(ABS(x) >> (8 * t))
+				digitt(ABS(x) >> (sizeof(digitt) * 8 * t))
 			);
 		fit();
 		return x;
@@ -70,14 +71,15 @@ public:
 		operator=(x);
 	}
 
-	/* "ExEZ" means "there exists x which is an integer." */
+	/* "ExEZ" means "there exists x, an integer." */
 	template<typename ExEZ>
 	BigInteger(ExEZ& x) {
 		operator=(x);
 	}
 
-	operator char() const {
-		return(m.size() ? m[0] : 0);
+	BigInteger operator+()const {
+		BigInteger t = *this;
+		return t;
 	}
 
 	operator bool() const {
@@ -91,16 +93,16 @@ public:
 		return false;
 	}
 
-	/* "ExEZ" means "there exists x which is an integer." */
+	/* "ExEZ" means "there exists x, an integer." */
 	template<typename ExEZ>
 	operator ExEZ()const {
 		ExEZ x = 0;
 		for (
 			size_t t = 0;
-			t < MIN(m.size(), sizeof(ExEZ));
+			t < MIN(m.size() * sizeof(digitt), sizeof(ExEZ)) / sizeof(digitt);
 			t++
 			)
-			x |= (ExEZ(m[t]) << (8 * t));
+			x |= (ExEZ(m[t]) << (sizeof(digitt) * 8 * t));
 		return x * sgn();
 	}
 
@@ -128,7 +130,9 @@ public:
 		return operator bool() || x;
 	}
 
-	bool operator==(BigInteger x)const;
+	bool operator==(BigInteger x)const {
+		return s == x.boolsgn() && m == x.mantissa();
+	}
 
 	bool operator!=(BigInteger x)const {
 		return!operator==(x);
@@ -141,10 +145,6 @@ public:
 	bool operator>=(BigInteger x)const;
 
 	bool operator<=(BigInteger x)const;
-
-	BigInteger operator+()const;
-
-	BigInteger operator~()const;
 
 	BigInteger operator&(BigInteger x)const;
 
@@ -167,5 +167,7 @@ public:
 	BigInteger operator%(BigInteger x)const;
 
 	BigInteger operator-()const;
+
+	BigInteger operator~()const;
 };
 typedef BigInteger __intn;

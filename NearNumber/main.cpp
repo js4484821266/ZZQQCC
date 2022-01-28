@@ -2,9 +2,9 @@
 #include"NearNumber.h"
 int main(void) {
 	__intn x;
-	x = (uintmax_t)1 << 63;
-	__intn y = +x;
+	x = 5000000000;
+	auto y = (uintmax_t)x;
 	std::cout << x.size() << std::endl;
-	std::cout << y.size() << std::endl;
+	std::cout << y << std::endl;
 	return 0;
 }

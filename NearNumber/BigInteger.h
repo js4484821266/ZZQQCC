@@ -15,7 +15,7 @@ class BigInteger {
 	mantissat m;
 
 	void fit(void) {
-		while (m.size())
+		while (m.size()>1)
 			if (!m.back())
 				m.pop_back();
 			else
@@ -57,7 +57,9 @@ public:
 			t++
 			)
 			m.push_back(
-				digitt(ABS(x) >> (sizeof(digitt) * 8 * t))
+				digitt(
+					ABS(x) >> (sizeof(digitt) * 8 * t)
+				)
 			);
 		fit();
 		return x;
@@ -75,11 +77,6 @@ public:
 	template<typename ExEZ>
 	BigInteger(ExEZ& x) {
 		operator=(x);
-	}
-
-	BigInteger operator+()const {
-		BigInteger t = *this;
-		return t;
 	}
 
 	operator bool() const {
@@ -142,15 +139,13 @@ public:
 
 	bool operator<(BigInteger x)const;
 
-	bool operator>=(BigInteger x)const;
+	bool operator>=(BigInteger x)const {
+		return operator>(x) || operator==(x);
+	}
 
-	bool operator<=(BigInteger x)const;
-
-	BigInteger operator&(BigInteger x)const;
-
-	BigInteger operator|(BigInteger x)const;
-
-	BigInteger operator^(BigInteger x)const;
+	bool operator<=(BigInteger x)const {
+		return operator<(x) || operator==(x);
+	}
 
 	BigInteger operator<<(BigInteger x)const;
 
@@ -167,7 +162,5 @@ public:
 	BigInteger operator%(BigInteger x)const;
 
 	BigInteger operator-()const;
-
-	BigInteger operator~()const;
 };
 typedef BigInteger __intn;

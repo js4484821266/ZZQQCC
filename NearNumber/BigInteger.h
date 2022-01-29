@@ -15,7 +15,7 @@ class BigInteger {
 	mantissat m;
 
 	void fit(void) {
-		while (m.size()>1)
+		while (m.size() > 1)
 			if (!m.back())
 				m.pop_back();
 			else
@@ -40,7 +40,7 @@ public:
 		return m.size();
 	}
 
-	BigInteger& operator=(BigInteger& x) {
+	const BigInteger& operator=(const BigInteger& x) {
 		s = x.boolsgn();
 		m = x.mantissa();
 		return x;
@@ -69,13 +69,13 @@ public:
 		operator=(0);
 	}
 
-	BigInteger(BigInteger& x) {
+	BigInteger(const BigInteger& x) {
 		operator=(x);
 	}
 
 	/* "ExEZ" means "there exists x, an integer." */
 	template<typename ExEZ>
-	BigInteger(ExEZ& x) {
+	BigInteger(const ExEZ& x) {
 		operator=(x);
 	}
 
@@ -107,80 +107,76 @@ public:
 		return !operator bool();
 	}
 
-	bool operator&&(BigInteger x)const {
+	bool operator&&(const BigInteger x)const {
 		return operator bool() && (bool)x;
 	}
 
 	/* "Ax" means "for all x." */
 	template<typename Ax>
-	bool operator&&(Ax x) const {
+	bool operator&&(const Ax x) const {
 		return operator bool() && x;
 	}
 
-	bool operator||(BigInteger x) const {
+	bool operator||(const BigInteger x) const {
 		return operator bool() || (bool)x;
 	}
 
 	/* "Ax" means "for all x." */
 	template<typename Ax>
-	bool operator||(Ax x)const {
+	bool operator||(const Ax x)const {
 		return operator bool() || x;
 	}
 
-	bool operator==(BigInteger x)const {
+	bool operator==(const BigInteger x)const {
 		return s == x.boolsgn() && m == x.mantissa();
 	}
 
-	bool operator!=(BigInteger x)const {
+	bool operator!=(const BigInteger x)const {
 		return!operator==(x);
 	}
 
-	bool operator>(BigInteger x)const {
-		if (s ^ x.boolsgn())
+	bool operator>(const BigInteger x)const {
+		if (s != x.boolsgn())
 			return x.boolsgn();
 		else
 			if (size() != x.size())
-				return size() > x.size();
+				return (size() > x.size()) != s;
 			else {
-				mantissat::reverse_iterator
-					mrit = m.rbegin(),
-					xrit = x.mantissa().rbegin();
-				while (
-					mrit != m.rend() ||
-					xrit != x.mantissa().rend()
-					) {
-					if (*mrit > *xrit)
-						return true ^ s;
-					++mrit;
-					++xrit;
+				size_t t = size();
+				while (t) {
+					--t;
+					if (m[t] > x.mantissa()[t])
+						return!s;
 				}
-				return false ^ s;
+				return s;
 			}
 	}
 
-	bool operator<(BigInteger x)const;
-
-	bool operator>=(BigInteger x)const {
-		return operator>(x) || operator==(x);
+	bool operator<(const BigInteger x)const{
+		return !operator>(x) && !operator==(x);
 	}
 
-	bool operator<=(BigInteger x)const {
-		return operator<(x) || operator==(x);
+	bool operator>=(const BigInteger x)const {
+		return!operator<(x);
 	}
 
-	BigInteger operator<<(BigInteger x)const;
+	bool operator<=(const BigInteger x)const {
+		return !operator>(x);
+	}
 
-	BigInteger operator>>(BigInteger x)const;
+	BigInteger operator<<(const BigInteger x)const;
 
-	BigInteger operator+(BigInteger x)const;
+	BigInteger operator>>(const BigInteger x)const;
 
-	BigInteger operator-(BigInteger x)const;
+	BigInteger operator+(const BigInteger x)const;
 
-	BigInteger operator*(BigInteger x)const;
+	BigInteger operator-(const BigInteger x)const;
 
-	BigInteger operator/(BigInteger x)const;
+	BigInteger operator*(const BigInteger x)const;
 
-	BigInteger operator%(BigInteger x)const;
+	BigInteger operator/(const BigInteger x)const;
+
+	BigInteger operator%(const BigInteger x)const;
 
 	BigInteger operator-()const;
 };

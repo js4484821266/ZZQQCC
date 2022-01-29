@@ -135,7 +135,28 @@ public:
 		return!operator==(x);
 	}
 
-	bool operator>(BigInteger x)const;
+	bool operator>(BigInteger x)const {
+		if (s ^ x.boolsgn())
+			return x.boolsgn();
+		else
+			if (size() != x.size())
+				return size() > x.size();
+			else {
+				mantissat::reverse_iterator
+					mrit = m.rbegin(),
+					xrit = x.mantissa().rbegin();
+				while (
+					mrit != m.rend() ||
+					xrit != x.mantissa().rend()
+					) {
+					if (*mrit > *xrit)
+						return true ^ s;
+					++mrit;
+					++xrit;
+				}
+				return false ^ s;
+			}
+	}
 
 	bool operator<(BigInteger x)const;
 

@@ -261,12 +261,6 @@ public:
 	}
 
 	/* Takes the value whose bits are shifted. */
-	const BigInteger& operator<<=(const BigInteger& x) {
-		if (!x);
-		else if (x.boolsgn()) {
-		}
-		else;
-		return*this;
-	}
+	const BigInteger& operator<<=(const BigInteger& x);
 };
 typedef BigInteger __intn;

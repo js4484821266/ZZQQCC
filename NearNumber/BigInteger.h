@@ -22,51 +22,45 @@ class BigInteger {
 public:
 
 	/* Returns arithmetic sign: -1 if negative, and 1 otherwise. */
-	intmax_t sgn(void) const {
+	const intmax_t sgn(void) const {
 		return 1 - 2 * (intmax_t)s;
 	}
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
-	bool boolsgn(void)const {
+	const bool& boolsgn(void) const{
 		return s;
 	}
 
 	/* Returns a reference to a vector (a flexible array) of mantissa. */
-	const mantissat& mantissa(void)const {
+	const mantissat& mantissa(void) const {
 		return m;
 	}
 
 	/* Returns size of the mantissa vector, a flexible array. */
-	size_t size(void)const {
+	const size_t size(void)const {
 		return m.size();
 	}
 
 	/* Returns a unit of the mantissa vector. */
-	const digitt& operator[](size_t index) const {
+	digitt& operator[](const size_t& index) {
 		return m[index];
 	}
 
 	/* Returns a bit of the mantissa vector in boolean form. */
-	bool b(size_t index)const {
+	const bool bit(const size_t& index) {
 		return!!(operator[](index / (8 * sizeof(digitt))) & (1 << (index % (8 * sizeof(digitt)))));
 	}
 
-	/* Copies the object into this. */
-	const BigInteger& operator=(const BigInteger& x) {
-		s = x.boolsgn();
-		m = x.mantissa();
-		return x;
-	}
+	/* Initialises this to a copy of an object. */
+	BigInteger(const BigInteger& x) :s(x.boolsgn()), m(x.mantissa()) {}
 
-	/* "ExEZ" means "there exists x, an integer."
-	   Splits a general integer into units and puts them into this. */
-	template<typename ExEZ>
-	const ExEZ operator=(const ExEZ x) {
+	/* Initialises this to a general integer. */
+	BigInteger(const intmax_t& x = 0) {
 		s = (x < 0);
 		m.clear();
 		for (
 			size_t t = 0;
-			t < sizeof(ExEZ) / sizeof(digitt);
+			t < sizeof(intmax_t) / sizeof(digitt);
 			t++
 			)
 			m.push_back(
@@ -75,28 +69,10 @@ public:
 				)
 			);
 		fit();
-		return x;
-	}
-
-	/* Initialises this to 0. */
-	BigInteger(void) {
-		operator=(0);
-	}
-
-	/* Initialises this to a copy of an object. */
-	BigInteger(const BigInteger& x) {
-		operator=(x);
-	}
-
-	/* "ExEZ" means "there exists x, an integer."
-	   Initialises this to a general integer. */
-	template<typename ExEZ>
-	BigInteger(const ExEZ x) {
-		operator=(x);
 	}
 
 	/* Casts this to a boolean. */
-	operator bool() const {
+	operator bool() {
 		for (
 			size_t t = 0;
 			t < size();
@@ -110,7 +86,7 @@ public:
 	/* "ExEZ" means "there exists x, an integer."
 	   Casts this to a general integer. */
 	template<typename ExEZ>
-	operator ExEZ()const {
+	operator ExEZ() {
 		ExEZ x = 0;
 		for (
 			size_t t = 0;
@@ -122,46 +98,32 @@ public:
 	}
 
 	/* Checks if 0. */
-	bool operator!() const {
+	const bool operator!() {
 		return !operator bool();
 	}
 
 	/* Performs a logical AND comparison with an object. */
-	bool operator&&(const BigInteger& x)const {
+	const bool operator&&(BigInteger& x) {
 		return operator bool() && (bool)x;
 	}
 
-	/* "Ax" means "for all x."
-	   Performs a logical AND comparison with a general integer. */
-	template<typename Ax>
-	bool operator&&(const Ax x) const {
-		return operator bool() && x;
-	}
-
 	/* Performs a logical OR comparison with an object. */
-	bool operator||(const BigInteger& x) const {
+	const bool operator||(BigInteger& x) {
 		return operator bool() || (bool)x;
 	}
 
-	/* "Ax" means "for all x."
-	   Performs a logical OR comparison with a general integer. */
-	template<typename Ax>
-	bool operator||(const Ax x)const {
-		return operator bool() || x;
-	}
-
 	/* Checks if this has the value equal to that of an object. */
-	bool operator==(const BigInteger& x)const {
+	const bool operator==(BigInteger& x)const {
 		return s == x.boolsgn() && m == x.mantissa();
 	}
 
 	/* Checks if this has the value NOT equal to that of an object. */
-	bool operator!=(const BigInteger& x)const {
+	const bool operator!=(BigInteger& x)const {
 		return!operator==(x);
 	}
 
 	/* Checks if this has a value greater than that of an object. */
-	bool operator>(const BigInteger& x)const {
+	const bool operator>(BigInteger& x) {
 		if (s != x.boolsgn())
 			return x.boolsgn();
 		else
@@ -179,22 +141,22 @@ public:
 	}
 
 	/* Checks if this has a value less than that of an object. */
-	bool operator<(const BigInteger& x)const {
+	const bool operator<(BigInteger& x) {
 		return !operator>(x) && !operator==(x);
 	}
 
 	/* Checks if this has a value greater than or equal to that of an object. */
-	bool operator>=(const BigInteger& x)const {
+	const bool operator>=(BigInteger& x) {
 		return!operator<(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
-	bool operator<=(const BigInteger& x)const {
+	const bool operator<=(BigInteger& x) {
 		return !operator>(x);
 	}
 
 	/* Takes the value of bitwise AND operation. */
-	const BigInteger& operator&=(const BigInteger& x) {
+	BigInteger& operator&=(BigInteger& x) {
 		s = s && x.boolsgn();
 		for (
 			size_t t = 0;
@@ -206,14 +168,15 @@ public:
 			m.resize(x.size());
 		return*this;
 	}
+
 	/* Returns the value of bitwise AND operation. */
-	const BigInteger operator&(const BigInteger& x) {
+	BigInteger operator&(BigInteger& x)  const {
 		BigInteger t = *this;
 		return t &= x;
 	}
 
 	/* Takes the value of bitwise OR operation. */
-	const BigInteger& operator|=(const BigInteger& x) {
+	BigInteger& operator|=(BigInteger& x) {
 		s = s || x.boolsgn();
 		for (
 			size_t t = 0;
@@ -230,14 +193,15 @@ public:
 				m.push_back(x[t]);
 		return*this;
 	}
+
 	/* Returns the value of bitwise OR operation. */
-	const BigInteger operator|(const BigInteger& x) {
+	BigInteger operator|(BigInteger& x) const {
 		BigInteger t = *this;
 		return t |= x;
 	}
 
-	/* Takes the value of bitwise OR operation. */
-	const BigInteger& operator^=(const BigInteger& x) {
+	/* Takes the value of bitwise XOR operation. */
+	BigInteger& operator^=(BigInteger& x) {
 		s = s != x.boolsgn();
 		for (
 			size_t t = 0;
@@ -254,13 +218,31 @@ public:
 				m.push_back(x[t]);
 		return*this;
 	}
-	/* Returns the value of bitwise OR operation. */
-	const BigInteger operator^(const BigInteger& x) {
+
+	/* Returns the value of bitwise XOR operation. */
+	BigInteger operator^(BigInteger& x) const {
 		BigInteger t = *this;
 		return t ^= x;
 	}
 
 	/* Takes the value whose bits are shifted. */
-	const BigInteger& operator<<=(const BigInteger& x);
+	BigInteger& operator<<=(const intmax_t&x) {
+		if (x < 0) {
+			for (
+				size_t t = 0;
+				t < size() * 8 - x;
+				t++
+				) {
+				// TODO
+			}
+		}
+		else;
+	}
+	BigInteger& operator>>=(const intmax_t& x) {
+		if (x < 0)
+			return operator<<=(-x);
+		else
+			return operator<<=(x);
+	}
 };
 typedef BigInteger __intn;

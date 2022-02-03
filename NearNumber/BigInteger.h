@@ -7,11 +7,11 @@
 #define ABS(x) ((x)*SGN(x))
 class BigInteger {
 	bool s = 0;
-	typedef  uint8_t digitt;
-	typedef std::vector<digitt> mantissat;
+	typedef  uint8_t unitt;
+	typedef std::vector<unitt> mantissat;
 	mantissat m;
 
-	void fit(void) {
+	void shorten(void) {
 		while (m.size() > 1)
 			if (!m.back())
 				m.pop_back();
@@ -27,7 +27,7 @@ public:
 	}
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
-	const bool& boolsgn(void) const{
+	const bool& boolsgn(void) const {
 		return s;
 	}
 
@@ -41,34 +41,46 @@ public:
 		return m.size();
 	}
 
-	/* Returns a unit of the mantissa vector. */
-	digitt& operator[](const size_t& index) {
+	/* Takes and returns the invert element of addition of this. */
+	BigInteger& invert(void) {
+		s = !s;
+		return*this;
+	}
+
+	/* "ExEZ" means "there exists x, a general integer."
+	   Returns a unit of the mantissa vector. */
+	template<typename ExEZ>
+	unitt& operator[](const ExEZ& index) {
 		return m[index];
 	}
 
-	/* Returns a bit of the mantissa vector in boolean form. */
-	const bool bit(const size_t& index) {
-		return!!(operator[](index / (8 * sizeof(digitt))) & (1 << (index % (8 * sizeof(digitt)))));
+	/* "ExEZ" means "there exists x, a general integer."
+	   Returns a bit of the mantissa vector in boolean form. */
+	template<typename ExEZ>
+	const bool bit(const ExEZ& index) {
+		return!!(operator[](index / (8 * sizeof(unitt))) & (1 << (index % (8 * sizeof(unitt)))));
 	}
 
 	/* Initialises this to a copy of an object. */
 	BigInteger(const BigInteger& x) :s(x.boolsgn()), m(x.mantissa()) {}
 
-	/* Initialises this to a general integer. */
-	BigInteger(const intmax_t& x = 0) {
+	/* "ExEZ" means "there exists x, a general integer."
+	   Initialises this to a general integer. */
+	template<typename ExEZ>
+	BigInteger(const ExEZ& x = 0) {
 		s = (x < 0);
 		m.clear();
 		for (
 			size_t t = 0;
-			t < sizeof(intmax_t) / sizeof(digitt);
+			t < MAX(sizeof(ExEZ) / sizeof(unitt), 1);
 			t++
 			)
 			m.push_back(
-				digitt(
-					ABS(x) >> (sizeof(digitt) * 8 * t)
+				unitt(
+					ABS(x) >> (sizeof(unitt) * 8 * t)
 				)
 			);
-		fit();
+		shorten();
 	}
 
 	/* Casts this to a boolean. */
@@ -90,10 +102,10 @@ public:
 		ExEZ x = 0;
 		for (
 			size_t t = 0;
-			t < MIN(size() * sizeof(digitt), sizeof(ExEZ)) / sizeof(digitt);
+			t < MIN(size() * sizeof(unitt), sizeof(ExEZ)) / sizeof(unitt);
 			t++
 			)
-			x |= (ExEZ(operator[](t)) << (sizeof(digitt) * 8 * t));
+			x |= (ExEZ(operator[](t)) << (sizeof(unitt) * 8 * t));
 		return x * sgn();
 	}
 
@@ -225,24 +237,72 @@ public:
 		return t ^= x;
 	}
 
-	/* Takes the value whose bits are shifted. */
-	BigInteger& operator<<=(const intmax_t&x) {
+	/* "ExEZ" means "there exists x, a general integer."
+	   Takes the value whose bits are shifted. */
+	template<typename ExEZ>
+	BigInteger& operator<<=(const ExEZ& x) {
+		size_t
+			p = ABS(x),
+			b = 8 * sizeof(unitt),
+			t = 0;
 		if (x < 0) {
 			for (
-				size_t t = 0;
-				t < size() * 8 - x;
+				t = 0;
+				t < size() * b - p;
 				t++
 				) {
-				// TODO
+				unitt& u = operator[]((t + p) / b),
+					flag = 1 << ((t + p) % b);
+				bool w = !!(u & flag);
+				unitt& v = operator[](t / b),
+					glag = 1 << (t % b);
+				bool y = !!(v & glag);
+				if (x < 0) {
+					if (w)
+						u ^= flag;
+					if (w != y)
+						v ^= glag;
+				}
 			}
 		}
-		else;
+		else if (!x);
+		else {
+			size_t q = size();
+			m.resize((q * b + p) / 8 + 1);
+			for (
+				t = 0;
+				t < q * b;
+				t++
+				) {
+				unitt& u = operator[]((q* b - 1 - t + p) / b),
+					flag = 1 << ((q * b - 1 - t + p) % b);
+				bool w = !!(u & flag);
+				unitt& v = operator[]((q* b - 1 - t) / b),
+					glag = 1 << ((q * b - 1 - t) % b);
+				bool y = !!(v & glag);
+				if (y) {
+					v ^= glag;
+					u ^= flag;
+				}
+			}
+		}
+		shorten();
+		return*this;
 	}
-	BigInteger& operator>>=(const intmax_t& x) {
-		if (x < 0)
-			return operator<<=(-x);
-		else
-			return operator<<=(x);
+	template<typename ExEZ>
+	BigInteger& operator>>=(const ExEZ& x) {
+		return operator<<=(-x);
+	}
+
+	template<typename ExEZ>
+	BigInteger operator<<(const ExEZ& x) {
+		BigInteger t = *this;
+		return t <<= x;
+	}
+	template<typename ExEZ>
+	BigInteger operator>>(const ExEZ& x) {
+		BigInteger t = *this;
+		return t >>= x;
 	}
 };
 typedef BigInteger __intn;

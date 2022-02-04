@@ -1,7 +1,6 @@
 #pragma once
 #include"BigInteger.h"
 class NearNumber {
-	__intn m;
-	__intn e;
+	BigInteger m;
+	BigInteger e;
 };
-typedef NearNumber __floatn;

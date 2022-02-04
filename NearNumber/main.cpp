@@ -1,14 +1,12 @@
 #include<iostream>
 #include"NearNumber.h"
 int main(void) {
-	__intn x = 0x44444;
-	__intn y = 4294967296;
+	BigInteger x = 0x44444;
+	BigInteger y = 0;
 	std::cout << "x: " << (intmax_t)x << ", ";
 	std::cout << "y: " << (intmax_t)y << std::endl << std::hex;
 	std::cout << "x: " << (intmax_t)x << ", ";
 	std::cout << "y: " << (intmax_t)y << std::endl;
-	std::cout << "x.sgn: " << x.sgn() << ", ";
-	std::cout << "y.sgn: " << y.sgn() << std::endl;
 	std::cout << "x.boolsgn: " << x.boolsgn() << ", ";
 	std::cout << "y.boolsgn: " << y.boolsgn() << std::endl;
 	std::cout << "x.length: " << x.length() << ", ";
@@ -21,6 +19,8 @@ int main(void) {
 	std::cout << "y.bit(0): " << y.bit(0) << std::endl;
 	std::cout << "(bool)x: " << (bool)x << ", ";
 	std::cout << "(bool)y: " << (bool)y << std::endl;
+	std::cout << "x.sgn: " << x.sgn() << ", ";
+	std::cout << "y.sgn: " << y.sgn() << std::endl;
 	std::cout << "!x: " << !x << ", ";
 	std::cout << "!y: " << !y << std::endl;
 	std::cout << "y&&x: " << (y && x) << std::endl;

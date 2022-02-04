@@ -5,9 +5,9 @@
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
-template<typename unitt=int>
 class BigInteger {
 	bool s = 0;
+	typedef int unitt;
 	typedef std::vector<unitt> mantissat;
 	mantissat m;
 
@@ -21,13 +21,8 @@ class BigInteger {
 
 public:
 
-	/* Returns arithmetic sign: -1 if negative, and 1 otherwise. */
-	const int sgn(void) const {
-		return 1 - 2 * (int)s;
-	}
-
 	/* Returns boolean sign: true if negative, and false otherwise. */
-	const bool& boolsgn(void) const {
+	bool boolsgn(void) const {
 		return s;
 	}
 
@@ -37,7 +32,7 @@ public:
 	}
 
 	/* Returns length of the mantissa vector, a flexible array. */
-	const size_t length(void)const {
+	size_t length(void)const {
 		return m.size();
 	}
 
@@ -50,6 +45,10 @@ public:
 	/* "ExEZ" means "there exists x, a general integer."
 	   Returns a unit of the mantissa vector. */
 	template<typename ExEZ>
+	const unitt& operator[](const ExEZ& index) const {
+		return m[index];
+	}
+	template<typename ExEZ>
 	unitt& operator[](const ExEZ& index) {
 		return m[index];
 	}
@@ -57,7 +56,7 @@ public:
 	/* "ExEZ" means "there exists x, a general integer."
 	   Returns a bit of the mantissa vector in boolean form. */
 	template<typename ExEZ>
-	const bool bit(const ExEZ& index) {
+	bool bit(const ExEZ& index) const {
 		return!!(operator[](index / (8 * sizeof(unitt))) & (1 << (index % (8 * sizeof(unitt)))));
 	}
 
@@ -84,7 +83,7 @@ public:
 	}
 
 	/* Casts this to a boolean. */
-	operator bool() {
+	operator bool() const {
 		for (
 			size_t t = 0;
 			t < length();
@@ -95,10 +94,15 @@ public:
 		return false;
 	}
 
+	/* Returns arithmetic sign: -1 if negative, and 1 otherwise. */
+	int sgn(void) const {
+		return (1 - 2 * (int)s) * operator bool();
+	}
+
 	/* "ExEZ" means "there exists x, an integer."
 	   Casts this to a general integer. */
 	template<typename ExEZ>
-	operator ExEZ() {
+	operator ExEZ() const {
 		ExEZ x = 0;
 		for (
 			size_t t = 0;
@@ -110,17 +114,17 @@ public:
 	}
 
 	/* Checks if 0. */
-	const bool operator!() {
+	bool operator!()const {
 		return !operator bool();
 	}
 
 	/* Performs a logical AND comparison with an object. */
-	const bool operator&&(BigInteger& x) {
+	const bool operator&&(BigInteger& x)const {
 		return operator bool() && (bool)x;
 	}
 
 	/* Performs a logical OR comparison with an object. */
-	const bool operator||(BigInteger& x) {
+	const bool operator||(BigInteger& x) const {
 		return operator bool() || (bool)x;
 	}
 
@@ -135,7 +139,7 @@ public:
 	}
 
 	/* Checks if this has a value greater than that of an object. */
-	const bool operator>(BigInteger& x) {
+	const bool operator>(BigInteger& x) const {
 		if (s != x.boolsgn())
 			return x.boolsgn();
 		else
@@ -153,17 +157,17 @@ public:
 	}
 
 	/* Checks if this has a value less than that of an object. */
-	const bool operator<(BigInteger& x) {
+	const bool operator<(BigInteger& x) const {
 		return !operator>(x) && !operator==(x);
 	}
 
 	/* Checks if this has a value greater than or equal to that of an object. */
-	const bool operator>=(BigInteger& x) {
+	const bool operator>=(BigInteger& x)const {
 		return!operator<(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
-	const bool operator<=(BigInteger& x) {
+	const bool operator<=(BigInteger& x)const {
 		return !operator>(x);
 	}
 
@@ -293,28 +297,25 @@ public:
 		return operator<<=(-x);
 	}
 	template<typename ExEZ>
-	BigInteger operator<<(const ExEZ& x) {
+	BigInteger operator<<(const ExEZ& x)const {
 		BigInteger t = *this;
 		return t <<= x;
 	}
 	template<typename ExEZ>
-	BigInteger operator>>(const ExEZ& x) {
+	BigInteger operator>>(const ExEZ& x) const {
 		BigInteger t = *this;
 		return t >>= x;
 	}
 
 	/* Returns a hexadecimal string of this. */
-	const std::string _16(void) {
+	const std::string _16(void)const {
 		std::string out;
 		for (
 			size_t t = 0;
-			t < length(); 
+			t < length();
 			t++
 			) {
-			char* c;
-
 			// TODO
 		}
 	}
 };
-typedef BigInteger<int> __intn;

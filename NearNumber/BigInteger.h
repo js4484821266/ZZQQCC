@@ -3,11 +3,11 @@
 #include<vector>
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
-#define SGN(x) ((x)<0?intmax_t(-1):intmax_t(1))
-#define ABS(x) ((x)*SGN(x))
+#define SGN(x) ((x)<0?-1:1)
+#define ABS(x) ((x)<0?-(x):(x))
+template<typename unitt=int>
 class BigInteger {
 	bool s = 0;
-	typedef  uint8_t unitt;
 	typedef std::vector<unitt> mantissat;
 	mantissat m;
 
@@ -22,8 +22,8 @@ class BigInteger {
 public:
 
 	/* Returns arithmetic sign: -1 if negative, and 1 otherwise. */
-	const intmax_t sgn(void) const {
-		return 1 - 2 * (intmax_t)s;
+	const int sgn(void) const {
+		return 1 - 2 * (int)s;
 	}
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
@@ -36,8 +36,8 @@ public:
 		return m;
 	}
 
-	/* Returns size of the mantissa vector, a flexible array. */
-	const size_t size(void)const {
+	/* Returns length of the mantissa vector, a flexible array. */
+	const size_t length(void)const {
 		return m.size();
 	}
 
@@ -87,7 +87,7 @@ public:
 	operator bool() {
 		for (
 			size_t t = 0;
-			t < size();
+			t < length();
 			t++
 			)
 			if (operator[](t))
@@ -102,7 +102,7 @@ public:
 		ExEZ x = 0;
 		for (
 			size_t t = 0;
-			t < MIN(size() * sizeof(unitt), sizeof(ExEZ)) / sizeof(unitt);
+			t < MIN(length() * sizeof(unitt), sizeof(ExEZ)) / sizeof(unitt);
 			t++
 			)
 			x |= (ExEZ(operator[](t)) << (sizeof(unitt) * 8 * t));
@@ -139,10 +139,10 @@ public:
 		if (s != x.boolsgn())
 			return x.boolsgn();
 		else
-			if (size() != x.size())
-				return (size() > x.size()) != s;
+			if (length() != x.length())
+				return (length() > x.length()) != s;
 			else {
-				size_t t = size();
+				size_t t = length();
 				while (t) {
 					--t;
 					if (operator[](t) > x[t])
@@ -172,12 +172,12 @@ public:
 		s = s && x.boolsgn();
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < MIN(length(), x.length());
 			t++
 			)
 			m[t] &= x[t];
-		if (size() > x.size())
-			m.resize(x.size());
+		if (length() > x.length())
+			m.resize(x.length());
 		return*this;
 	}
 
@@ -192,14 +192,14 @@ public:
 		s = s || x.boolsgn();
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < MIN(length(), x.length());
 			t++
 			)
 			m[t] |= x[t];
-		if (size() < x.size())
+		if (length() < x.length())
 			for (
-				size_t t = MIN(size(), x.size());
-				t < MAX(size(), x.size());
+				size_t t = MIN(length(), x.length());
+				t < MAX(length(), x.length());
 				t++
 				)
 				m.push_back(x[t]);
@@ -217,14 +217,14 @@ public:
 		s = s != x.boolsgn();
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < MIN(length(), x.length());
 			t++
 			)
 			m[t] ^= x[t];
-		if (size() < x.size())
+		if (length() < x.length())
 			for (
-				size_t t = MIN(size(), x.size());
-				t < MAX(size(), x.size());
+				size_t t = MIN(length(), x.length());
+				t < MAX(length(), x.length());
 				t++
 				)
 				m.push_back(x[t]);
@@ -248,7 +248,7 @@ public:
 		if (x < 0) {
 			for (
 				t = 0;
-				t < size() * b - p;
+				t < length() * b - p;
 				t++
 				) {
 				unitt& u = operator[]((t + p) / b),
@@ -267,7 +267,7 @@ public:
 		}
 		else if (!x);
 		else {
-			size_t q = size();
+			size_t q = length();
 			m.resize((q * b + p) / 8 + 1);
 			for (
 				t = 0;
@@ -276,7 +276,6 @@ public:
 				) {
 				unitt& u = operator[]((q* b - 1 - t + p) / b),
 					flag = 1 << ((q * b - 1 - t + p) % b);
-				bool w = !!(u & flag);
 				unitt& v = operator[]((q* b - 1 - t) / b),
 					glag = 1 << ((q * b - 1 - t) % b);
 				bool y = !!(v & glag);
@@ -293,7 +292,6 @@ public:
 	BigInteger& operator>>=(const ExEZ& x) {
 		return operator<<=(-x);
 	}
-
 	template<typename ExEZ>
 	BigInteger operator<<(const ExEZ& x) {
 		BigInteger t = *this;
@@ -304,5 +302,19 @@ public:
 		BigInteger t = *this;
 		return t >>= x;
 	}
+
+	/* Returns a hexadecimal string of this. */
+	const std::string _16(void) {
+		std::string out;
+		for (
+			size_t t = 0;
+			t < length(); 
+			t++
+			) {
+			char* c;
+
+			// TODO
+		}
+	}
 };
-typedef BigInteger __intn;
+typedef BigInteger<int> __intn;

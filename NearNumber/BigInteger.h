@@ -5,6 +5,10 @@
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
+/*
+1. Declare a variable so that a loop takes not much time.
+2. Arguments be constants as many as possible.
+*/
 class BigInteger {
 	bool s = 0;
 	typedef unsigned int unitt;
@@ -37,21 +41,16 @@ public:
 		return m.size();
 	}
 
-	/* "xEZ" means "x is an arbitrary integer."
-	   Returns a unit of the mantissa vector. */
-	template<typename xEZ>
-	const unitt& operator[](const xEZ& index) const {
+	/* Returns a unit of the mantissa vector. */
+	const unitt& operator[](const size_t& index) const {
 		return m[index];
 	}
-	template<typename xEZ>
-	unitt& operator[](const xEZ& index) {
+	unitt& operator[](const size_t& index) {
 		return m[index];
 	}
 
-	/* "xEZ" means "x is an arbitrary integer."
-	   Returns a bit of the mantissa vector in boolean form. */
-	template<typename xEZ>
-	bool bit(const xEZ& index) const {
+	/* Returns a bit of the mantissa vector in boolean form. */
+	bool bit(const size_t& index) const {
 		return!!(operator[](index / (8 * sizeof(unitt))) & (1 << (index % (8 * sizeof(unitt)))));
 	}
 
@@ -65,14 +64,14 @@ public:
 	   Initialises this to an arbitrary integer. */
 	template<typename xEZ>
 	BigInteger(const xEZ& x = 0) :
-		bitn(sizeof(unitt) * 8) {
-		const size_t maxn = MAX(sizeof(xEZ) / sizeof(unitt), 1);
+		bitn(sizeof(unitt) * 8),
+		s(x < 0) {
+		const size_t nbyte = MAX(sizeof(xEZ) / sizeof(unitt), 1);
 		const auto a = ABS(intmax_t(x));
-		s = (x < 0);
 		m.clear();
 		for (
 			size_t t = 0;
-			t < maxn;
+			t < nbyte;
 			t++
 			)
 			m.push_back(
@@ -122,27 +121,27 @@ public:
 	}
 
 	/* Performs a logical AND comparison with an object. */
-	const bool operator&&(BigInteger& x)const {
+	const bool operator&&(const BigInteger& x)const {
 		return operator bool() && (bool)x;
 	}
 
 	/* Performs a logical OR comparison with an object. */
-	const bool operator||(BigInteger& x) const {
+	const bool operator||(const BigInteger& x) const {
 		return operator bool() || (bool)x;
 	}
 
 	/* Checks if this has the value equal to that of an object. */
-	const bool operator==(BigInteger& x)const {
+	const bool operator==(const BigInteger& x)const {
 		return s == x.boolsgn() && m == x.mantissa();
 	}
 
 	/* Checks if this has the value NOT equal to that of an object. */
-	const bool operator!=(BigInteger& x)const {
+	const bool operator!=(const BigInteger& x)const {
 		return!operator==(x);
 	}
 
 	/* Checks if this has a value greater than that of an object. */
-	const bool operator>(BigInteger& x) const {
+	const bool operator>(const BigInteger& x) const {
 		if (s != x.boolsgn())
 			return x.boolsgn();
 		else if (size() != x.size())
@@ -159,22 +158,22 @@ public:
 	}
 
 	/* Checks if this has a value less than that of an object. */
-	const bool operator<(BigInteger& x) const {
+	const bool operator<(const BigInteger& x) const {
 		return !operator>(x) && !operator==(x);
 	}
 
 	/* Checks if this has a value greater than or equal to that of an object. */
-	const bool operator>=(BigInteger& x)const {
+	const bool operator>=(const BigInteger& x)const {
 		return!operator<(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
-	const bool operator<=(BigInteger& x)const {
+	const bool operator<=(const BigInteger& x)const {
 		return !operator>(x);
 	}
 
 	/* Takes the value of bitwise AND operation. */
-	BigInteger& operator&=(BigInteger& x) {
+	BigInteger& operator&=(const BigInteger& x) {
 		s = s && x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		for (
@@ -189,13 +188,13 @@ public:
 	}
 
 	/* Returns the value of bitwise AND operation. */
-	BigInteger operator&(BigInteger& x)  const {
+	BigInteger operator&(const BigInteger& x)  const {
 		BigInteger t = *this;
 		return t &= x;
 	}
 
 	/* Takes the value of bitwise OR operation. */
-	BigInteger& operator|=(BigInteger& x) {
+	BigInteger& operator|=(const BigInteger& x) {
 		s = s || x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		const auto n = size();
@@ -217,13 +216,13 @@ public:
 	}
 
 	/* Returns the value of bitwise OR operation. */
-	BigInteger operator|(BigInteger& x) const {
+	BigInteger operator|(const BigInteger& x) const {
 		BigInteger t = *this;
 		return t |= x;
 	}
 
 	/* Takes the value of bitwise XOR operation. */
-	BigInteger& operator^=(BigInteger& x) {
+	BigInteger& operator^=(const BigInteger& x) {
 		s = s != x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		const auto n = size();
@@ -245,7 +244,7 @@ public:
 	}
 
 	/* Returns the value of bitwise XOR operation. */
-	BigInteger operator^(BigInteger& x) const {
+	BigInteger operator^(const BigInteger& x) const {
 		BigInteger t = *this;
 		return t ^= x;
 	}

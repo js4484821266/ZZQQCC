@@ -1,6 +1,6 @@
 #pragma once
 #include"BigInteger.h"
 class NearNumber {
-	BigInteger m;
-	BigInteger e;
+	BigInteger mumerator;
+	BigInteger denominator;
 };

@@ -61,16 +61,19 @@ public:
 	   Initialises this to an arbitrary integer. */
 	template<typename xEZ>
 	BigInteger(const xEZ& x = 0) {
+		const size_t maxn = MAX(sizeof(xEZ) / sizeof(unitt), 1);
+		const auto a = ABS(intmax_t(x));
+		const auto bitn = sizeof(unitt) * 8;
 		s = (x < 0);
 		m.clear();
 		for (
 			size_t t = 0;
-			t < MAX(sizeof(xEZ) / sizeof(unitt), 1);
+			t < maxn;
 			t++
 			)
 			m.push_back(
 				unitt(
-					ABS(x) >> (sizeof(unitt) * 8 * t)
+					a >> (bitn * t)
 				)
 			);
 		shorten();
@@ -78,9 +81,10 @@ public:
 
 	/* Casts this to a boolean. */
 	operator bool() const {
+		const size_t n = size();
 		for (
 			size_t t = 0;
-			t < size();
+			t < n;
 			t++
 			)
 			if (operator[](t))
@@ -98,12 +102,14 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
+		const auto minn = MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt);
+		const auto bitn = sizeof(unitt) * 8;
 		for (
 			size_t t = 0;
-			t < MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt);
+			t < minn;
 			t++
 			)
-			x |= (xEZ(operator[](t)) << (sizeof(unitt) * 8 * t));
+			x |= (xEZ(operator[](t)) << (bitn * t));
 		return x * sgn();
 	}
 
@@ -168,9 +174,10 @@ public:
 	/* Takes the value of bitwise AND operation. */
 	BigInteger& operator&=(BigInteger& x) {
 		s = s && x.boolsgn();
+		const size_t minn = MIN(size(), x.size());
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < minn;
 			t++
 			)
 			m[t] &= x[t];
@@ -188,16 +195,19 @@ public:
 	/* Takes the value of bitwise OR operation. */
 	BigInteger& operator|=(BigInteger& x) {
 		s = s || x.boolsgn();
+		const size_t minn = MIN(size(), x.size());
+		const auto n = size();
+		const auto xn = x.size();
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < minn;
 			t++
 			)
 			m[t] |= x[t];
-		if (size() < x.size())
+		if (n < xn)
 			for (
-				size_t t = size();
-				t <  x.size();
+				size_t t = n;
+				t < xn;
 				t++
 				)
 				m.push_back(x[t]);
@@ -213,16 +223,19 @@ public:
 	/* Takes the value of bitwise XOR operation. */
 	BigInteger& operator^=(BigInteger& x) {
 		s = s != x.boolsgn();
+		const size_t minn = MIN(size(), x.size());
+		const auto n = size();
+		const auto xn = x.size();
 		for (
 			size_t t = 0;
-			t < MIN(size(), x.size());
+			t < minn;
 			t++
 			)
 			m[t] ^= x[t];
-		if (size() < x.size())
+		if (n < xn)
 			for (
-				size_t t = size();
-				t < x.size();
+				size_t t = n;
+				t < xn;
 				t++
 				)
 				m.push_back(x[t]);
@@ -239,54 +252,51 @@ public:
 	   Takes the value whose bits are shifted. */
 	template<typename xEZ>
 	BigInteger& operator<<=(const xEZ& x) {
-		size_t
+		const size_t
 			p = ABS(x),
-			b = 8 * sizeof(unitt);
+			b = 8 * sizeof(unitt),
+			d = p / b,
+			n = size();
 		if (x < 0) {
-			/*for (
-				t = 0;
-				t < size() * b - p;
-				t++
-				) {
-				unitt& u = operator[]((t + p) / b),
-					flag = 1 << ((t + p) % b);
-				bool w = !!(u & flag);
-				unitt& v = operator[](t / b),
-					glag = 1 << (t % b);
-				bool y = !!(v & glag);
-					if (w)
-						u ^= flag;
-					if (w != y)
-						v ^= glag;
-			}*/
-			if (!(p % b)) {
+			if (n * 8 <= p) {
+				m.clear();
+				s = true;
+				m.push_back(1);
+			}
+			else if (!(p % b)) {
 				for (
 					size_t t = 0;
-					t < p / b;
+					t < n;
 					t++
 					) {
-
+					const auto tt = t + d;
+					operator[](t) = operator[](tt);
+					operator[](tt) = 0;
+				}
+			}
+			else {
+				for (
+					size_t t = 0;
+					t < n;
+					t++
+					) {
 				}
 			}
 		}
 		else if (!x);
 		else {
-			size_t q = size();
-			m.resize((q * b + p) / 8 + 1);
-			for (
-				size_t t = 0;
-				t < q * b;
-				t++
-				) {
-				unitt& u = operator[]((q* b - 1 - t + p) / b),
-					flag = 1 << ((q * b - 1 - t + p) % b);
-				unitt& v = operator[]((q* b - 1 - t) / b),
-					glag = 1 << ((q * b - 1 - t) % b);
-				bool y = !!(v & glag);
-				if (y) {
-					v ^= glag;
-					u ^= flag;
+			m.resize(n + d + 1);
+			if (!(p % b)) {
+				for (
+					size_t t = n - 1;
+					t >= 0;
+					t--
+					) {
+					operator[](t + d) = operator[](t);
+					operator[](t) = 0;
 				}
+			}
+			else {
 			}
 		}
 		shorten();

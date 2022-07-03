@@ -10,6 +10,7 @@ class BigInteger {
 	typedef unsigned int unitt;
 	typedef std::vector<unitt> mantissat;
 	mantissat m;
+	const size_t bitn;
 
 	void shorten(void) {
 		while (m.size() > 1)
@@ -55,15 +56,18 @@ public:
 	}
 
 	/* Initialises this to a copy of an object. */
-	BigInteger(const BigInteger& x) :s(x.boolsgn()), m(x.mantissa()) {}
+	BigInteger(const BigInteger& x) :
+		bitn(sizeof(unitt) * 8),
+		s(x.boolsgn()),
+		m(x.mantissa()) {}
 
 	/* "xEZ" means "x is an arbitrary integer."
 	   Initialises this to an arbitrary integer. */
 	template<typename xEZ>
-	BigInteger(const xEZ& x = 0) {
+	BigInteger(const xEZ& x = 0) :
+		bitn(sizeof(unitt) * 8) {
 		const size_t maxn = MAX(sizeof(xEZ) / sizeof(unitt), 1);
 		const auto a = ABS(intmax_t(x));
-		const auto bitn = sizeof(unitt) * 8;
 		s = (x < 0);
 		m.clear();
 		for (
@@ -93,7 +97,7 @@ public:
 	}
 
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
-	int sgn(void) const {
+	intmax_t sgn(void) const {
 		return (1 - 2 * (int)s) * operator bool();
 	}
 
@@ -103,7 +107,6 @@ public:
 	operator xEZ() const {
 		xEZ x = 0;
 		const auto minn = MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt);
-		const auto bitn = sizeof(unitt) * 8;
 		for (
 			size_t t = 0;
 			t < minn;
@@ -142,18 +145,17 @@ public:
 	const bool operator>(BigInteger& x) const {
 		if (s != x.boolsgn())
 			return x.boolsgn();
-		else
-			if (size() != x.size())
-				return (size() > x.size()) != s;
-			else {
-				size_t t = size();
-				while (t) {
-					--t;
-					if (operator[](t) > x[t])
-						return!s;
-				}
-				return false;
+		else if (size() != x.size())
+			return (size() > x.size()) != s;
+		else {
+			size_t t = size();
+			while (t) {
+				--t;
+				if (operator[](t) > x[t])
+					return!s;
 			}
+			return false;
+		}
 	}
 
 	/* Checks if this has a value less than that of an object. */

@@ -99,7 +99,7 @@ public:
 
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
 	const intmax_t sgn(void) const {
-		return (1 - 2 * (int)s) * operator bool();
+		return (intmax_t(1) - 2 * (int)s) * operator bool();
 	}
 
 	/* "xEZ" means "x is an arbitrary integer."

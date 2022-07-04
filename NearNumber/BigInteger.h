@@ -29,7 +29,7 @@ class BigInteger {
 public:
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
-	const bool boolsgn(void) const {
+	const bool& boolsgn(void) const {
 		return s;
 	}
 
@@ -283,6 +283,7 @@ public:
 					t < n;
 					t++
 					) {
+					// TODO
 				}
 			}
 		}
@@ -328,6 +329,7 @@ public:
 			t < size();
 			t++
 			) {
+			char* temp = 0;
 			// TODO
 		}
 	}

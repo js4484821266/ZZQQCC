@@ -1,13 +1,15 @@
 #pragma once
 #include<cstdint>
 #include<vector>
+#include<string>
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
 /*
 1. Declare a variable so that a loop takes not much time.
-2. Arguments be constants as many as possible.
+2. Values be constants as many as possible.
+3. Use their reference to save more space.
 */
 class BigInteger {
 	bool s = 0;
@@ -27,7 +29,7 @@ class BigInteger {
 public:
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
-	bool boolsgn(void) const {
+	const bool boolsgn(void) const {
 		return s;
 	}
 
@@ -37,7 +39,7 @@ public:
 	}
 
 	/* Returns size of the mantissa vector, a flexible array. */
-	size_t size(void)const {
+	const size_t size(void)const {
 		return m.size();
 	}
 
@@ -50,7 +52,7 @@ public:
 	}
 
 	/* Returns a bit of the mantissa vector in boolean form. */
-	bool bit(const size_t& index) const {
+	const bool bit(const size_t& index) const {
 		return!!(operator[](index / (8 * sizeof(unitt))) & (1 << (index % (8 * sizeof(unitt)))));
 	}
 
@@ -61,7 +63,7 @@ public:
 		m(x.mantissa()) {}
 
 	/* "xEZ" means "x is an arbitrary integer."
-	   Initialises this to an arbitrary integer. */
+	   Initialises this to an integer. */
 	template<typename xEZ>
 	BigInteger(const xEZ& x = 0) :
 		bitn(sizeof(unitt) * 8),
@@ -96,7 +98,7 @@ public:
 	}
 
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
-	intmax_t sgn(void) const {
+	const intmax_t sgn(void) const {
 		return (1 - 2 * (int)s) * operator bool();
 	}
 
@@ -116,7 +118,7 @@ public:
 	}
 
 	/* Checks if 0. */
-	bool operator!()const {
+	const bool operator!()const {
 		return !operator bool();
 	}
 

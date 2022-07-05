@@ -105,7 +105,7 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
-		const auto minn = MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt);
+		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt),1);
 		for (
 			size_t t = 0;
 			t < minn;
@@ -257,47 +257,11 @@ public:
 			d = p / b,
 			n = size();
 		if (x < 0) {
-			if (n * 8 <= p) {
-				m.clear();
-				s = true;
-				m.push_back(1);
-			}
-			else if (!(p % b)) {
-				for (
-					size_t t = 0;
-					t < n;
-					t++
-					) {
-					const auto tt = t + d;
-					operator[](t) = operator[](tt);
-					operator[](tt) = 0;
-				}
-			}
-			else {
-				for (
-					size_t t = 0;
-					t < n;
-					t++
-					) {
-					// TODO
-				}
-			}
+			//TODO
 		}
 		else if (!x);
 		else {
-			m.resize(n + d + 1);
-			if (!(p % b)) {
-				for (
-					intmax_t t = n - 1;
-					t >= 0;
-					t--
-					) {
-					operator[](t + d) = operator[](t);
-					operator[](t) = 0;
-				}
-			}
-			else {
-			}
+			//TODO
 		}
 		shorten();
 		return*this;
@@ -322,14 +286,14 @@ public:
 		std::string out;
 		const size_t nx = sizeof(unitt) * 2;
 		char temp[6], * tempp = new char[nx + 1];
-		sprintf_s(tempp, nx + 1, "%X", m.back());
+		sprintf_s(tempp, nx + 1, "%s%X", s ? "-" : "", m.back());
 		out += tempp;
 		for (
-			intmax_t t = size()-2;
-			t >=0;
+			intmax_t t = size() - 2;
+			t >= 0;
 			t--
 			) {
-			sprintf_s(temp, 6, "%%0%zdX", nx);
+			sprintf_s(temp, 6, "%%0%zuX", nx);
 			sprintf_s(tempp, nx + 1, temp, m[t]);
 			out += tempp;
 		}

@@ -16,7 +16,7 @@ class BigInteger {
 	typedef unsigned int unitt;
 	typedef std::vector<unitt> mantissat;
 	mantissat m;
-	const size_t bitn;
+	const size_t ubitn;
 
 	void shorten(void) {
 		while (m.size() > 1)
@@ -57,15 +57,18 @@ public:
 	}
 
 	/* Initialises this to a copy of an object. */
+	BigInteger& operator=(BigInteger& x) {
+		s = x.boolsgn();
+		m = x.mantissa();
+		return x;
+	}
 	BigInteger(const BigInteger& x) :
-		bitn(sizeof(unitt) * 8),
+		ubitn(sizeof(unitt) * 8),
 		s(x.boolsgn()),
 		m(x.mantissa()) {}
 
 	/* Initialises this to an integer. */
-	BigInteger(const intmax_t& x = 0) :
-		bitn(sizeof(unitt) * 8),
-		s(x < 0) {
+	const intmax_t& operator=(const intmax_t& x) {
 		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(unitt), 1);
 		const intmax_t a = ABS(x);
 		m.clear();
@@ -76,10 +79,16 @@ public:
 			)
 			m.push_back(
 				unitt(
-					a >> (bitn * t)
+					a >> (ubitn * t)
 				)
 			);
 		shorten();
+		return x;
+	}
+	BigInteger(const intmax_t& x = 0) :
+		ubitn(sizeof(unitt) * 8),
+		s(x < 0) {
+		operator=(x);
 	}
 
 	/* Casts this to a boolean. */
@@ -105,14 +114,14 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
-		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt),1);
+		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt), 1);
 		for (
 			size_t t = 0;
 			t < minn;
 			t++
 			)
-			x |= (xEZ(operator[](t)) << (bitn * t));
-		return x * sgn();
+			x |= (xEZ(operator[](t)) << (ubitn * t));
+		return xEZ(x * sgn());
 	}
 
 	/* Checks if 0. */
@@ -253,8 +262,7 @@ public:
 	BigInteger& operator<<=(const xEZ& x) {
 		const size_t
 			p = ABS(x),
-			b = 8 * sizeof(unitt),
-			d = p / b,
+			d = p / ubitn,
 			n = size();
 		if (x < 0) {
 			//TODO
@@ -282,11 +290,11 @@ public:
 	}
 
 	/* Returns a hexadecimal string of this. */
-	const std::string _16(void)const {
+	const std::string _16(bool specified = false)const {
 		std::string out;
 		const size_t nx = sizeof(unitt) * 2;
-		char temp[6], * tempp = new char[nx + 1];
-		sprintf_s(tempp, nx + 1, "%s%X", s ? "-" : "", m.back());
+		char temp[6], * tempp = new char[nx + 1 + 2 + 1];
+		sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", s ? "-" : "", specified ? "0x" : "", m.back());
 		out += tempp;
 		for (
 			intmax_t t = size() - 2;

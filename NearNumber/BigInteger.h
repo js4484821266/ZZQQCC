@@ -62,14 +62,12 @@ public:
 		s(x.boolsgn()),
 		m(x.mantissa()) {}
 
-	/* "xEZ" means "x is an arbitrary integer."
-	   Initialises this to an integer. */
-	template<typename xEZ>
-	BigInteger(const xEZ& x = 0) :
+	/* Initialises this to an integer. */
+	BigInteger(const intmax_t& x = 0) :
 		bitn(sizeof(unitt) * 8),
 		s(x < 0) {
-		const size_t nbyte = MAX(sizeof(xEZ) / sizeof(unitt), 1);
-		const auto a = ABS(intmax_t(x));
+		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(unitt), 1);
+		const intmax_t a = ABS(x);
 		m.clear();
 		for (
 			size_t t = 0;
@@ -199,7 +197,6 @@ public:
 	BigInteger& operator|=(const BigInteger& x) {
 		s = s || x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
-		const auto n = size();
 		const auto xn = x.size();
 		for (
 			size_t t = 0;
@@ -207,9 +204,9 @@ public:
 			t++
 			)
 			m[t] |= x[t];
-		if (n < xn)
+		if (size() < xn)
 			for (
-				size_t t = n;
+				size_t t = size();
 				t < xn;
 				t++
 				)
@@ -227,7 +224,6 @@ public:
 	BigInteger& operator^=(const BigInteger& x) {
 		s = s != x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
-		const auto n = size();
 		const auto xn = x.size();
 		for (
 			size_t t = 0;
@@ -235,9 +231,9 @@ public:
 			t++
 			)
 			m[t] ^= x[t];
-		if (n < xn)
+		if (size() < xn)
 			for (
-				size_t t = n;
+				size_t t = size();
 				t < xn;
 				t++
 				)
@@ -292,7 +288,7 @@ public:
 			m.resize(n + d + 1);
 			if (!(p % b)) {
 				for (
-					size_t t = n - 1;
+					intmax_t t = n - 1;
 					t >= 0;
 					t--
 					) {
@@ -324,13 +320,20 @@ public:
 	/* Returns a hexadecimal string of this. */
 	const std::string _16(void)const {
 		std::string out;
+		const size_t nx = sizeof(unitt) * 2;
+		char temp[6], * tempp = new char[nx + 1];
+		sprintf_s(tempp, nx + 1, "%X", m.back());
+		out += tempp;
 		for (
-			size_t t = 0;
-			t < size();
-			t++
+			intmax_t t = size()-2;
+			t >=0;
+			t--
 			) {
-			char* temp = 0;
-			// TODO
+			sprintf_s(temp, 6, "%%0%zdX", nx);
+			sprintf_s(tempp, nx + 1, temp, m[t]);
+			out += tempp;
 		}
+		delete[]tempp;
+		return out;
 	}
 };

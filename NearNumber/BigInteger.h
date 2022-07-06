@@ -71,6 +71,7 @@ public:
 	const intmax_t& operator=(const intmax_t& x) {
 		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(unitt), 1);
 		const intmax_t a = ABS(x);
+		s = x < 0;
 		m.clear();
 		for (
 			size_t t = 0;

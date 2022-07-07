@@ -43,11 +43,11 @@ public:
 	}
 
 	/* Returns a hexadecimal string of this. */
-	const std::string _16(bool specified = false)const {
+	const std::string _16(bool prefix = false)const {
 		std::string out;
 		const size_t nx = sizeof(unitt) * 2;
 		char temp[6], * tempp = new char[nx + 1 + 2 + 1];
-		sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", specified ? "0x" : "", mant.back());
+		sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mant.back());
 		out += tempp;
 		for (
 			intmax_t t = size() - 2;
@@ -295,7 +295,6 @@ public:
 					madbt &= ((1 << amb) - 1);
 					mant[t] = temp;
 				}
-				mant.resize(n - adb + 1);
 			}
 			else {
 				for (t = 0; t < n - adb; t++) {
@@ -303,8 +302,8 @@ public:
 					mant[t] = madbt;
 					madbt = 0;
 				}
-				mant.resize(n - adb);
 			}
+			mant.resize(n - adb);
 		}
 		else if (!x);
 		else {
@@ -312,19 +311,19 @@ public:
 			if (amb) {
 				for (t = 0; t < n; t++) {
 					unitt
-						& mzadbt = mant[n - 1 + adb - t],
-						& mzadbt1 = mant[n - 1 + adb - t - 1];
-					unitt temp = (mzadbt << amb) | ((mzadbt1 >> bamb) & ((1 << amb) - 1));
-					mzadbt &= -(1 << bamb);
-					mzadbt1 &= ((1 << bamb) - 1);
-					mant[n - 1 - t] = temp;
+						& mnt = mant[n - t],
+						& mnt1 = mant[n - t - 1];
+					unitt temp = ((mnt1 >> bamb) & ((1 << bamb) - 1)) | (mnt << amb);
+					mnt &= -(1 << bamb);
+					mnt1 &= ((1 << bamb) - 1);
+					mant[n + adb - t] = temp;
 				}
 			}
 			else {
 				for (t = 0; t < n; t++) {
-					unitt& mzadbt = mant[n - 1 + adb - t];
-					mant[n - 1 - t] = mzadbt;
-					mzadbt = 0;
+					unitt& mnt = mant[n - t];
+					mant[n + adb - t] = mnt;
+					mnt = 0;
 				}
 			}
 		}

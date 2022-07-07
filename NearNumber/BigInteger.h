@@ -43,7 +43,7 @@ public:
 	}
 
 	/* Returns a hexadecimal string of this. */
-	const std::string _16(bool prefix = false)const {
+	const std::string hexadec(bool prefix = false)const {
 		std::string out;
 		const size_t nx = sizeof(unitt) * 2;
 		char temp[6], * tempp = new char[nx + 1 + 2 + 1];
@@ -81,7 +81,9 @@ public:
 		mant = x.mantissa();
 		return x;
 	}
-	BigInteger(const BigInteger& x) { operator=(x); }
+	BigInteger(const BigInteger& x) :
+		sign(x.boolsgn()),
+		mant(x.mantissa()) {  }
 
 	/* Initialises this to an integer. */
 	const intmax_t& operator=(const intmax_t& x) {
@@ -311,19 +313,20 @@ public:
 			if (amb) {
 				for (t = 0; t < n; t++) {
 					unitt
-						& mnt = mant[n - t],
-						& mnt1 = mant[n - t - 1];
-					unitt temp = ((mnt1 >> bamb) & ((1 << bamb) - 1)) | (mnt << amb);
-					mnt &= -(1 << bamb);
-					mnt1 &= ((1 << bamb) - 1);
-					mant[n + adb - t] = temp;
+						& mzadbt = mant[n - 1 + adb - t],
+						& mzadbt1 = mant[n - 1 + adb - t + 1],
+						& mzt = mant[n - 1 - t];
+					const unitt temp = mzt;
+					mzt = 0;
+					mzadbt1 |= (temp >> bamb) & ((1 << amb) - 1);
+					mzadbt |= temp << amb;
 				}
 			}
 			else {
 				for (t = 0; t < n; t++) {
-					unitt& mnt = mant[n - t];
-					mant[n + adb - t] = mnt;
-					mnt = 0;
+					unitt& mzt = mant[n - 1 - t];
+					mant[n - 1 - t + adb] = mzt;
+					mzt = 0;
 				}
 			}
 		}

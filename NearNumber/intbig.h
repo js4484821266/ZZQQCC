@@ -10,19 +10,45 @@ typedef unsigned int iiunitt;
 class idigits :public std::vector<iiunitt> {
 public:
 	idigits& addz(idigits& x) {
-		iiunitt msbf4rs = iiunitt(1) << (sizeof(iiunitt) * 8 - 1);
-		const auto n = this->size();
-		const auto xn = x.size();
-		this->resize(MAX(n, xn) + 1);
+		const auto 
+			n = this->size(),
+			xn = x.size(),
+			minn=MIN(n,xn),
+			b=sizeof(iiunitt)*8;
+		if(n<xn)
+			this->resize(xn);
 		for (
-			int t = 0;
-			t < n;
+			size_t t = 0;
+			t < minn;
 			t++
 			) {
+			const auto 
+				eaxn = this->operator[](t) & x[t],
+				eaxo = this->operator[](t) | x[t];
+			bool carry = false;
+			for (
+				size_t i = 0;
+				i < b;
+				i++
+				) {
+				if (!(eaxo & (1 << (b - 1 - i))))
+					break;
+				if (eaxn & (1 << (b - 1 - i))) {
+					carry = true;
+					break;
+				}
+			}
+			if (carry) {
+				idigits i;
+				i.resize(t + 1);
+				i.push_back(1);
+				addz(i);
+			}
 		}
 		return*this;
 	}
 	idigits& difz(idigits& x) {
+		x;
 		return*this;
 	}
 };
@@ -311,10 +337,9 @@ public:
 					iiunitt
 						& madbt = mant[adb + t],
 						& madbt1 = mant[adb + t + 1];
-					iiunitt temp = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
+					mant[t] = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
 					madbt1 &= -(1 << amb);
 					madbt &= ((1 << amb) - 1);
-					mant[t] = temp;
 				}
 			}
 			else {
@@ -367,6 +392,7 @@ public:
 		return t >>= x;
 	}
 
+	/* Takes the value of addition. */
 	intbig& operator+=(intbig& x) {
 		x;
 		return*this;

@@ -6,11 +6,6 @@
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
-/*
-1. Declare a variable so that a loop takes not much time.
-2. Values be constants as many as possible.
-3. Use their reference to save more space.
-*/
 typedef unsigned int iiunitt;
 class idigits :public std::vector<iiunitt> {
 public:
@@ -54,7 +49,7 @@ public:
 		return mant;
 	}
 
-	/* Returns size of the mantissa vector, a flexible array. */
+	/* Returns size of the mantissa vector. */
 	const size_t size(void)const {
 		return mant.size();
 	}
@@ -62,17 +57,18 @@ public:
 	/* Returns a hexadecimal string of this. */
 	const std::string hexadec(bool prefix = false)const {
 		std::string out;
+		const auto n = size();
 		const size_t nx = sizeof(iiunitt) * 2;
 		char temp[6], * tempp = new char[nx + 1 + 2 + 1];
 		sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mant.back());
 		out += tempp;
 		for (
-			intmax_t t = size() - 2;
-			t >= 0;
-			t--
+			size_t t = 0;
+			t < n - 1;
+			t++
 			) {
 			sprintf_s(temp, 6, "%%0%zuX", nx);
-			sprintf_s(tempp, nx + 1, temp, mant[t]);
+			sprintf_s(tempp, nx + 1, temp, mant[n - 2 - t]);
 			out += tempp;
 		}
 		delete[]tempp;
@@ -153,11 +149,11 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
-		const auto minn = MAX(MIN(size() * sizeof(iiunitt), sizeof(xEZ)) / sizeof(iiunitt), 1),
+		const auto n = MAX(MIN(size() * sizeof(iiunitt), sizeof(xEZ)) / sizeof(iiunitt), 1),
 			b = sizeof(iiunitt) * 8;
 		for (
 			size_t t = 0;
-			t < minn;
+			t < n;
 			t++
 			)
 			x |= (xEZ(operator[](t)) << (b * t));

@@ -11,10 +11,16 @@
 2. Values be constants as many as possible.
 3. Use their reference to save more space.
 */
+template< typename xEZ=unsigned int>
+class idigits :public std::vector<xEZ> {
+public:
+
+};
+
 class BigInteger {
 	bool sign = 0;
 	typedef unsigned int unitt;
-	typedef std::vector<unitt> mantissat;
+	typedef idigits<unitt> mantissat;
 	mantissat mant;
 
 	void shorten(void) {
@@ -88,7 +94,7 @@ public:
 	/* Initialises this to an integer. */
 	const intmax_t& operator=(const intmax_t& x) {
 		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(unitt), 1);
-		const intmax_t a = ABS(x);
+		const uintmax_t a = ABS(x);
 		const auto b = sizeof(unitt) * 8;
 		sign = x < 0;
 		mant.clear();
@@ -122,7 +128,13 @@ public:
 
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
 	const intmax_t sgn(void) const {
-		return (1 - 2 * (intmax_t)sign) * operator bool();
+		if (operator bool())
+			if (sign)
+				return-1;
+			else
+				return 1;
+		else
+			return 0;
 	}
 
 	/* "xEZ" means "x is an arbitrary integer."
@@ -130,8 +142,8 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
-		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt), 1)
-			, b = sizeof(unitt) * 8;
+		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt), 1),
+			b = sizeof(unitt) * 8;
 		for (
 			size_t t = 0;
 			t < minn;
@@ -183,14 +195,14 @@ public:
 		}
 	}
 
-	/* Checks if this has a value less than that of an object. */
-	const bool operator<(const BigInteger& x) const {
-		return !operator>(x) && !operator==(x);
-	}
-
 	/* Checks if this has a value greater than or equal to that of an object. */
 	const bool operator>=(const BigInteger& x)const {
-		return!operator<(x);
+		return operator>(x) || operator==(x);
+	}
+
+	/* Checks if this has a value less than that of an object. */
+	const bool operator<(const BigInteger& x) const {
+		return !operator>=(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
@@ -346,5 +358,14 @@ public:
 	BigInteger operator>>(const xEZ& x) const {
 		BigInteger t = *this;
 		return t >>= x;
+	}
+
+	BigInteger& operator+=(BigInteger& x) {
+		x;
+		return*this;
+	}
+	BigInteger operator+(BigInteger& x)const {
+		BigInteger t= *this;
+		return t += x;
 	}
 };

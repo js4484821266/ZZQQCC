@@ -11,15 +11,29 @@
 2. Values be constants as many as possible.
 3. Use their reference to save more space.
 */
-template< typename xEZ = unsigned int>
-class idigits :public std::vector<xEZ> {
+typedef unsigned int iiunitt;
+class idigits :public std::vector<iiunitt> {
 public:
+	idigits& addz(idigits& x) {
+		iiunitt msbf4rs = iiunitt(1) << (sizeof(iiunitt) * 8 - 1);
+		const auto n = this->size();
+		const auto xn = x.size();
+		this->resize(MAX(n, xn) + 1);
+		for (
+			int t = 0;
+			t < n;
+			t++
+			) {
+		}
+		return*this;
+	}
+	idigits& difz(idigits& x) {
+		return*this;
+	}
 };
 
-class BigInteger {
-	typedef unsigned int unitt;
-	typedef idigits<unitt> mantissat;
-	mantissat mant;
+class intbig {
+	idigits mant;
 	void shorten(void) {
 		while (mant.size() > 1)
 			if (!mant.back())
@@ -36,7 +50,7 @@ public:
 	}
 
 	/* Returns a reference to a vector (a flexible array) of mantissa. */
-	const mantissat& mantissa(void) const {
+	const idigits& mantissa(void) const {
 		return mant;
 	}
 
@@ -48,7 +62,7 @@ public:
 	/* Returns a hexadecimal string of this. */
 	const std::string hexadec(bool prefix = false)const {
 		std::string out;
-		const size_t nx = sizeof(unitt) * 2;
+		const size_t nx = sizeof(iiunitt) * 2;
 		char temp[6], * tempp = new char[nx + 1 + 2 + 1];
 		sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mant.back());
 		out += tempp;
@@ -66,33 +80,33 @@ public:
 	}
 
 	/* Returns a unit of the mantissa vector. */
-	const unitt& operator[](const size_t& index) const {
+	const iiunitt& operator[](const size_t& index) const {
 		return mant[index];
 	}
-	unitt& operator[](const size_t& index) {
+	iiunitt& operator[](const size_t& index) {
 		return mant[index];
 	}
 
 	/* Returns a bit of the mantissa vector in boolean form. */
 	const bool bit(const size_t& index) const {
-		return!!(operator[](index / (8 * sizeof(unitt))) & (1 << (index % (8 * sizeof(unitt)))));
+		return!!(operator[](index / (8 * sizeof(iiunitt))) & (1 << (index % (8 * sizeof(iiunitt)))));
 	}
 
 	/* Initialises this to a copy of an object. */
-	BigInteger& operator=(BigInteger& x) {
+	intbig& operator=(intbig& x) {
 		sign = x.boolsgn();
 		mant = x.mantissa();
 		return x;
 	}
-	BigInteger(const BigInteger& x) :
+	intbig(const intbig& x) :
 		sign(x.boolsgn()),
 		mant(x.mantissa()) {  }
 
 	/* Initialises this to an integer. */
 	const intmax_t& operator=(const intmax_t& x) {
-		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(unitt), 1);
+		const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(iiunitt), 1);
 		const uintmax_t a = ABS(x);
-		const auto b = sizeof(unitt) * 8;
+		const auto b = sizeof(iiunitt) * 8;
 		sign = x < 0;
 		mant.clear();
 		for (
@@ -101,14 +115,14 @@ public:
 			t++
 			)
 			mant.push_back(
-				unitt(
+				iiunitt(
 					a >> (b * t)
 				)
 			);
 		shorten();
 		return x;
 	}
-	BigInteger(const intmax_t& x = 0) { operator=(x); }
+	intbig(const intmax_t& x = 0) { operator=(x); }
 
 	/* Casts this to a boolean. */
 	operator bool() const {
@@ -139,8 +153,8 @@ public:
 	template<typename xEZ>
 	operator xEZ() const {
 		xEZ x = 0;
-		const auto minn = MAX(MIN(size() * sizeof(unitt), sizeof(xEZ)) / sizeof(unitt), 1),
-			b = sizeof(unitt) * 8;
+		const auto minn = MAX(MIN(size() * sizeof(iiunitt), sizeof(xEZ)) / sizeof(iiunitt), 1),
+			b = sizeof(iiunitt) * 8;
 		for (
 			size_t t = 0;
 			t < minn;
@@ -156,27 +170,27 @@ public:
 	}
 
 	/* Performs a logical AND comparison with an object. */
-	const bool operator&&(const BigInteger& x)const {
+	const bool operator&&(const intbig& x)const {
 		return operator bool() && (bool)x;
 	}
 
 	/* Performs a logical OR comparison with an object. */
-	const bool operator||(const BigInteger& x) const {
+	const bool operator||(const intbig& x) const {
 		return operator bool() || (bool)x;
 	}
 
 	/* Checks if this has the value equal to that of an object. */
-	const bool operator==(const BigInteger& x)const {
+	const bool operator==(const intbig& x)const {
 		return sign == x.boolsgn() && mant == x.mantissa();
 	}
 
 	/* Checks if this has the value NOT equal to that of an object. */
-	const bool operator!=(const BigInteger& x)const {
+	const bool operator!=(const intbig& x)const {
 		return!operator==(x);
 	}
 
 	/* Checks if this has a value greater than that of an object. */
-	const bool operator>(const BigInteger& x) const {
+	const bool operator>(const intbig& x) const {
 		if (sign != x.boolsgn())
 			return x.boolsgn();
 		else if (size() != x.size())
@@ -193,22 +207,22 @@ public:
 	}
 
 	/* Checks if this has a value greater than or equal to that of an object. */
-	const bool operator>=(const BigInteger& x)const {
+	const bool operator>=(const intbig& x)const {
 		return operator>(x) || operator==(x);
 	}
 
 	/* Checks if this has a value less than that of an object. */
-	const bool operator<(const BigInteger& x) const {
+	const bool operator<(const intbig& x) const {
 		return !operator>=(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
-	const bool operator<=(const BigInteger& x)const {
+	const bool operator<=(const intbig& x)const {
 		return !operator>(x);
 	}
 
 	/* Takes the value of bitwise AND operation. */
-	BigInteger& operator&=(const BigInteger& x) {
+	intbig& operator&=(const intbig& x) {
 		sign = sign && x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		for (
@@ -223,13 +237,13 @@ public:
 	}
 
 	/* Returns the value of bitwise AND operation. */
-	BigInteger operator&(const BigInteger& x)  const {
-		BigInteger t = *this;
+	intbig operator&(const intbig& x)  const {
+		intbig t = *this;
 		return t &= x;
 	}
 
 	/* Takes the value of bitwise OR operation. */
-	BigInteger& operator|=(const BigInteger& x) {
+	intbig& operator|=(const intbig& x) {
 		sign = sign || x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
@@ -250,13 +264,13 @@ public:
 	}
 
 	/* Returns the value of bitwise OR operation. */
-	BigInteger operator|(const BigInteger& x) const {
-		BigInteger t = *this;
+	intbig operator|(const intbig& x) const {
+		intbig t = *this;
 		return t |= x;
 	}
 
 	/* Takes the value of bitwise XOR operation. */
-	BigInteger& operator^=(const BigInteger& x) {
+	intbig& operator^=(const intbig& x) {
 		sign = sign != x.boolsgn();
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
@@ -277,18 +291,18 @@ public:
 	}
 
 	/* Returns the value of bitwise XOR operation. */
-	BigInteger operator^(const BigInteger& x) const {
-		BigInteger t = *this;
+	intbig operator^(const intbig& x) const {
+		intbig t = *this;
 		return t ^= x;
 	}
 
 	/* "xEZ" means "x is an arbitrary integer."
 	   Takes the value whose bits are shifted. */
 	template<typename xEZ>
-	BigInteger& operator<<=(const xEZ& x) {
+	intbig& operator<<=(const xEZ& x) {
 		const size_t
 			a = ABS(x),
-			b = sizeof(unitt) * 8,
+			b = sizeof(iiunitt) * 8,
 			adb = a / b,
 			n = size(),
 			amb = a % b,
@@ -298,10 +312,10 @@ public:
 		if (x < 0) {
 			if (amb) {
 				for (t = 0; t < n - adb; t++) {
-					unitt
+					iiunitt
 						& madbt = mant[adb + t],
 						& madbt1 = mant[adb + t + 1];
-					unitt temp = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
+					iiunitt temp = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
 					madbt1 &= -(1 << amb);
 					madbt &= ((1 << amb) - 1);
 					mant[t] = temp;
@@ -309,7 +323,7 @@ public:
 			}
 			else {
 				for (t = 0; t < n - adb; t++) {
-					unitt& madbt = mant[adb + t];
+					iiunitt& madbt = mant[adb + t];
 					mant[t] = madbt;
 					madbt = 0;
 				}
@@ -321,11 +335,11 @@ public:
 			mant.resize(n + adb + 1);
 			if (amb) {
 				for (t = 0; t < n; t++) {
-					unitt
+					iiunitt
 						& mzadbt = mant[n - 1 + adb - t],
 						& mzadbt1 = mant[n - 1 + adb - t + 1],
 						& mzt = mant[n - 1 - t];
-					const unitt temp = mzt;
+					const iiunitt temp = mzt;
 					mzt = 0;
 					mzadbt1 |= (temp >> bamb) & ((1 << amb) - 1);
 					mzadbt |= temp << amb;
@@ -333,7 +347,7 @@ public:
 			}
 			else {
 				for (t = 0; t < n; t++) {
-					unitt& mzt = mant[n - 1 - t];
+					iiunitt& mzt = mant[n - 1 - t];
 					mant[n - 1 - t + adb] = mzt;
 					mzt = 0;
 				}
@@ -343,26 +357,26 @@ public:
 		return*this;
 	}
 	template<typename xEZ>
-	BigInteger& operator>>=(const xEZ& x) {
+	intbig& operator>>=(const xEZ& x) {
 		return operator<<=(-x);
 	}
 	template<typename xEZ>
-	BigInteger operator<<(const xEZ& x)const {
-		BigInteger t = *this;
+	intbig operator<<(const xEZ& x)const {
+		intbig t = *this;
 		return t <<= x;
 	}
 	template<typename xEZ>
-	BigInteger operator>>(const xEZ& x) const {
-		BigInteger t = *this;
+	intbig operator>>(const xEZ& x) const {
+		intbig t = *this;
 		return t >>= x;
 	}
 
-	BigInteger& operator+=(BigInteger& x) {
+	intbig& operator+=(intbig& x) {
 		x;
 		return*this;
 	}
-	BigInteger operator+(BigInteger& x)const {
-		BigInteger t = *this;
+	intbig operator+(intbig& x)const {
+		intbig t = *this;
 		return t += x;
 	}
 };

@@ -11,9 +11,27 @@
 2. Values be constants as many as possible.
 3. Use their reference to save more space.
 */
-template< typename xEZ = unsigned int>
-class idigits :public std::vector<xEZ> {
+template< typename unitt = unsigned int>
+class idigits :public std::vector<unitt> {
 public:
+	idigits& addz(idigits& x) {
+		const unitt msbf4rs = unitt(1) << (sizeof(unitt) * 8 - 1);
+		const auto n = this->size();
+		const auto xn = x.size();
+		this->resize(MAX(n, xn) + 1);
+		for (
+			int t = 0;
+			t < n;
+			t++
+			) {
+			auto andz = this->operator[](t) & x[t];
+			auto orz = this->operator[](t) | x[t];
+		}
+		return*this;
+	}
+	idigits& difz(idigits& x) {
+		return*this;
+	}
 };
 
 class BigInteger {

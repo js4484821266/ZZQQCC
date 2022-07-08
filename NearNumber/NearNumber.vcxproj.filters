@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NearNumber.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="BigInteger.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

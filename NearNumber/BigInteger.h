@@ -11,18 +11,15 @@
 2. Values be constants as many as possible.
 3. Use their reference to save more space.
 */
-template< typename xEZ=unsigned int>
+template< typename xEZ = unsigned int>
 class idigits :public std::vector<xEZ> {
 public:
-
 };
 
 class BigInteger {
-	bool sign = 0;
 	typedef unsigned int unitt;
 	typedef idigits<unitt> mantissat;
 	mantissat mant;
-
 	void shorten(void) {
 		while (mant.size() > 1)
 			if (!mant.back())
@@ -30,8 +27,8 @@ class BigInteger {
 			else
 				break;
 	}
-
 public:
+	bool sign = 0;
 
 	/* Returns boolean sign: true if negative, and false otherwise. */
 	const bool& boolsgn(void) const {
@@ -365,7 +362,7 @@ public:
 		return*this;
 	}
 	BigInteger operator+(BigInteger& x)const {
-		BigInteger t= *this;
+		BigInteger t = *this;
 		return t += x;
 	}
 };

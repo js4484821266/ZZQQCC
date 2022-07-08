@@ -47,8 +47,7 @@ public:
 		}
 		return*this;
 	}
-	idigits& difz(idigits& x) {
-		x;
+	idigits& subz(idigits& x) {
 		return*this;
 	}
 };
@@ -394,7 +393,6 @@ public:
 
 	/* Takes the value of addition. */
 	intbig& operator+=(intbig& x) {
-		x;
 		return*this;
 	}
 	intbig operator+(intbig& x)const {

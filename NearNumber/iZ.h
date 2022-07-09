@@ -103,15 +103,15 @@ public:
 
 	/* Returns a unit of the mantissa vector. */
 	const iiunitt& operator[](const size_t& index) const {
-		return mant[index];
+		return mant.at(index);
 	}
 	iiunitt& operator[](const size_t& index) {
-		return mant[index];
+		return mant.at(index);
 	}
 
 	/* Returns a bit of the mantissa vector in boolean form. */
 	const bool bit(const size_t& index) const {
-		return!!(operator[](index / (8 * sizeof(iiunitt))) & (1 << (index % (8 * sizeof(iiunitt)))));
+		return!!(mant.at(index / (8 * sizeof(iiunitt))) & (1 << (index % (8 * sizeof(iiunitt)))));
 	}
 
 	/* Initialises this to a copy of an object. */
@@ -168,22 +168,6 @@ public:
 				return 1;
 		else
 			return 0;
-	}
-
-	/* "xEZ" means "x is an arbitrary integer."
-	   Casts this to an integer. */
-	template<typename xEZ>
-	operator xEZ() const {
-		xEZ x = 0;
-		const auto n = MAX(MIN(size() * sizeof(iiunitt), sizeof(xEZ)) / sizeof(iiunitt), 1),
-			b = sizeof(iiunitt) * 8;
-		for (
-			size_t t = 0;
-			t < n;
-			t++
-			)
-			x |= (xEZ(operator[](t)) << (b * t));
-		return xEZ(x * sgn());
 	}
 
 	/* Checks if 0. */

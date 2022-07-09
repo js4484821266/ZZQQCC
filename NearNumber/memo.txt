@@ -1,5 +1,0 @@
-1. Declare a variable so that a loop takes not much time.
-2. Values be constants as many as possible.
-3. Use their reference to save more space.
- - Variables, referred to, be constant.
-4. Value of the variable do increase when in loop.

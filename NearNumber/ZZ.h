@@ -53,12 +53,40 @@ public:
 		}
 		return*this;
 	}
-	idigits& subz(const idigits& x) {
+	idigits& subz(idigits x) {
+		const auto
+			b = sizeof(iiunitt) * 8,
+			n = size(),
+			xn = x.size();
+		if (n < xn)
+			resize(xn);
+		for (
+			size_t t = 0;
+			t < xn;
+			t++
+			)
+			if (*(end() - 1 - t) < *(x.end() - 1 - t)) {
+				swap(x);
+				break;
+			}
+		for (
+			size_t t = 0;
+			t < xn;
+			t++
+			) {
+			if (at(t) < x.at(t)) {
+				idigits i;
+				i.resize(t + 1);
+				i.push_back(1);
+				subz(i);
+			}
+			at(t) -= x.at(t);
+		}
 		return*this;
 	}
 };
 
-class iZ {
+class ZZ {
 	idigits mant;
 	void shorten(void) {
 		while (mant.size() > 1)
@@ -115,12 +143,12 @@ public:
 	}
 
 	/* Initialises this to a copy of an object. */
-	iZ& operator=(iZ& x) {
+	const ZZ& operator=(const ZZ& x) {
 		sign = x.sign;
 		mant = x.mantissa();
 		return x;
 	}
-	iZ(const iZ& x) :
+	ZZ(const ZZ& x) :
 		sign(x.sign),
 		mant(x.mantissa()) {  }
 
@@ -144,11 +172,11 @@ public:
 		shorten();
 		return x;
 	}
-	iZ(const intmax_t& x = 0) { operator=(x); }
+	ZZ(const intmax_t& x = 0) { operator=(x); }
 
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
 	const intmax_t sgn(void) const {
-		if (size()==1&&!mant.at(0))
+		if (size() == 1 && !mant.at(0))
 			return 0;
 		else
 			if (sign)
@@ -163,27 +191,27 @@ public:
 	}
 
 	/* Performs a logical AND comparison with an object. */
-	const bool operator&&(const iZ& x)const {
-		return!(operator!()||!x);
+	const bool operator&&(const ZZ& x)const {
+		return!(operator!() || !x);
 	}
 
 	/* Performs a logical OR comparison with an object. */
-	const bool operator||(const iZ& x) const {
+	const bool operator||(const ZZ& x) const {
 		return!(operator!() && !x);
 	}
 
 	/* Checks if this has the value equal to that of an object. */
-	const bool operator==(const iZ& x)const {
+	const bool operator==(const ZZ& x)const {
 		return sign == x.sign && mant == x.mantissa();
 	}
 
 	/* Checks if this has the value NOT equal to that of an object. */
-	const bool operator!=(const iZ& x)const {
+	const bool operator!=(const ZZ& x)const {
 		return!operator==(x);
 	}
 
 	/* Checks if this has a value greater than that of an object. */
-	const bool operator>(const iZ& x) const {
+	const bool operator>(const ZZ& x) const {
 		if (sign != x.sign)
 			return x.sign;
 		else if (size() != x.size())
@@ -200,22 +228,22 @@ public:
 	}
 
 	/* Checks if this has a value greater than or equal to that of an object. */
-	const bool operator>=(const iZ& x)const {
+	const bool operator>=(const ZZ& x)const {
 		return operator>(x) || operator==(x);
 	}
 
 	/* Checks if this has a value less than that of an object. */
-	const bool operator<(const iZ& x) const {
+	const bool operator<(const ZZ& x) const {
 		return !operator>=(x);
 	}
 
 	/* Checks if this has a value less than or equal to that of an object. */
-	const bool operator<=(const iZ& x)const {
+	const bool operator<=(const ZZ& x)const {
 		return !operator>(x);
 	}
 
 	/* Takes the value of bitwise AND operation. */
-	iZ& operator&=(const iZ& x) {
+	ZZ& operator&=(const ZZ& x) {
 		sign = sign && x.sign;
 		const size_t minn = MIN(size(), x.size());
 		for (
@@ -230,13 +258,13 @@ public:
 	}
 
 	/* Returns the value of bitwise AND operation. */
-	iZ operator&(const iZ& x)  const {
-		iZ t = *this;
+	ZZ operator&(const ZZ& x)  const {
+		ZZ t = *this;
 		return t &= x;
 	}
 
 	/* Takes the value of bitwise OR operation. */
-	iZ& operator|=(const iZ& x) {
+	ZZ& operator|=(const ZZ& x) {
 		sign = sign || x.sign;
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
@@ -257,13 +285,13 @@ public:
 	}
 
 	/* Returns the value of bitwise OR operation. */
-	iZ operator|(const iZ& x) const {
-		iZ t = *this;
+	ZZ operator|(const ZZ& x) const {
+		ZZ t = *this;
 		return t |= x;
 	}
 
 	/* Takes the value of bitwise XOR operation. */
-	iZ& operator^=(const iZ& x) {
+	ZZ& operator^=(const ZZ& x) {
 		sign = sign != x.sign;
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
@@ -284,15 +312,13 @@ public:
 	}
 
 	/* Returns the value of bitwise XOR operation. */
-	iZ operator^(const iZ& x) const {
-		iZ t = *this;
+	ZZ operator^(const ZZ& x) const {
+		ZZ t = *this;
 		return t ^= x;
 	}
 
-	/* "xEZ" means "x is an arbitrary integer."
-	   Takes the value whose bits are shifted. */
-	template<typename xEZ>
-	iZ& operator<<=(const xEZ& x) {
+	/* Takes the value whose bits are shifted. */
+	ZZ& operator<<=(const int& x) {
 		const size_t
 			a = ABS(x),
 			b = sizeof(iiunitt) * 8,
@@ -348,27 +374,31 @@ public:
 		shorten();
 		return*this;
 	}
-	template<typename xEZ>
-	iZ& operator>>=(const xEZ& x) {
+	ZZ& operator>>=(const int& x) {
 		return operator<<=(-x);
 	}
-	template<typename xEZ>
-	iZ operator<<(const xEZ& x)const {
-		iZ t = *this;
+	ZZ operator<<(const int& x)const {
+		ZZ t = *this;
 		return t <<= x;
 	}
-	template<typename xEZ>
-	iZ operator>>(const xEZ& x) const {
-		iZ t = *this;
+	ZZ operator>>(const int& x) const {
+		ZZ t = *this;
 		return t >>= x;
 	}
 
 	/* Takes the value of addition. */
-	iZ& operator+=(iZ& x) {
+	ZZ& operator+=( ZZ x) {
+		if (sign == x.sign)
+			mant.addz(x.mantissa());
+		else {
+			mant.subz(x.mantissa());
+			x.sign = 0;
+			//TODO
+		}
 		return*this;
 	}
-	iZ operator+(iZ& x)const {
-		iZ t = *this;
+	ZZ operator+(const ZZ& x)const {
+		ZZ t = *this;
 		return t += x;
 	}
 };

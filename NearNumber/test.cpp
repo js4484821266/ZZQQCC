@@ -1,15 +1,15 @@
 #include<iostream>
-#include"iZ.h"
+#include"ZZ.h"
 int main(void) {
-	iZ x = -1;
+	ZZ x = -1;
 	x <<= 15;
 	std::cout << x.hexadec(true) << ".sign==" << x.sign << std::endl;
 	std::cout << x.hexadec(true) << ".sgn()==" << x.sgn() << std::endl;
 	std::cout << "!" << x.hexadec(true) << "==" << !x << std::endl;
-	std::cout << x.hexadec(true) << "&&1==" << (x && iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "&&0==" << (x && iZ(0)) << std::endl;
-	std::cout << x.hexadec(true) << "||1==" << (x || iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "||0==" << (x || iZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "&&1==" << (x && ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "&&0==" << (x && ZZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "||1==" << (x || ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "||0==" << (x || ZZ(0)) << std::endl;
 	std::cout << std::endl;
 
 	x = 0;
@@ -17,10 +17,10 @@ int main(void) {
 	std::cout << x.hexadec(true) << ".sign==" << x.sign << std::endl;
 	std::cout << x.hexadec(true) << ".sgn()==" << x.sgn() << std::endl;
 	std::cout << "!" << x.hexadec(true) << "==" << !x << std::endl;
-	std::cout << x.hexadec(true) << "&&1==" << (x && iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "&&0==" << (x && iZ(0)) << std::endl;
-	std::cout << x.hexadec(true) << "||1==" << (x || iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "||0==" << (x || iZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "&&1==" << (x && ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "&&0==" << (x && ZZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "||1==" << (x || ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "||0==" << (x || ZZ(0)) << std::endl;
 	std::cout << std::endl;
 
 	x = 0x1234567890abcdef;
@@ -28,28 +28,28 @@ int main(void) {
 	std::cout << x.hexadec(true) << ".sign==" << x.sign << std::endl;
 	std::cout << x.hexadec(true) << ".sgn()==" << x.sgn() << std::endl;
 	std::cout << "!" << x.hexadec(true) << "==" << !x << std::endl;
-	std::cout << x.hexadec(true) << "&&1==" << (x && iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "&&0==" << (x && iZ(0)) << std::endl;
-	std::cout << x.hexadec(true) << "||1==" << (x || iZ(1)) << std::endl;
-	std::cout << x.hexadec(true) << "||0==" << (x || iZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "&&1==" << (x && ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "&&0==" << (x && ZZ(0)) << std::endl;
+	std::cout << x.hexadec(true) << "||1==" << (x || ZZ(1)) << std::endl;
+	std::cout << x.hexadec(true) << "||0==" << (x || ZZ(0)) << std::endl;
 	std::cout << std::endl;
 
-	x = x << (int)sizeof(iiunitt)*8;
-	iZ s(x);
-	std::cout << "(" << x.hexadec() << "==" << s.hexadec() << ")==" << (x == s) << std::endl;
-	std::cout << "(" << x.hexadec() << "!=" << s.hexadec() << ")==" << (x != s) << std::endl;
+	x = x << (int)sizeof(iiunitt) * 8;
+	ZZ s(x);
+	std::cout << "(" << x.hexadec(true) << "==" << s.hexadec(true) << ")==" << (x == s) << std::endl;
+	std::cout << "(" << x.hexadec(true) << "!=" << s.hexadec(true) << ")==" << (x != s) << std::endl;
 	s[0] = 1;
-	std::cout << "(" << x.hexadec() << "==" << s.hexadec() << ")==" << (x == s) << std::endl;
-	std::cout << "(" << x.hexadec() << "!=" << s.hexadec() << ")==" << (x != s) << std::endl;
-	std::cout << "(" << x.hexadec() << ">" << s.hexadec() << ")==" << (x > s) << std::endl;
-	std::cout << "(" << s.hexadec() << ">" << x.hexadec() << ")==" << (x < s) << std::endl;
+	std::cout << "(" << x.hexadec(true) << "==" << s.hexadec(true) << ")==" << (x == s) << std::endl;
+	std::cout << "(" << x.hexadec(true) << "!=" << s.hexadec(true) << ")==" << (x != s) << std::endl;
+	std::cout << "(" << x.hexadec(true) << ">" << s.hexadec(true) << ")==" << (x > s) << std::endl;
+	std::cout << "(" << s.hexadec(true) << ">" << x.hexadec(true) << ")==" << (x < s) << std::endl;
 	s = s << (int)sizeof(iiunitt) * 8;
-	std::cout << "(" << x.hexadec() << ">" << s.hexadec() << ")==" << (x > s) << std::endl;
-	std::cout << "(" << s.hexadec() << ">" << x.hexadec() << ")==" << (x < s) << std::endl;
+	std::cout << "(" << x.hexadec(true) << ">" << s.hexadec(true) << ")==" << (x > s) << std::endl;
+	std::cout << "(" << s.hexadec(true) << ">" << x.hexadec(true) << ")==" << (x < s) << std::endl;
 	std::cout << std::endl;
 
 	x = INT64_MAX;
-	x <<= 100;
+	x <<= 100 - 4;
 	std::cout << x.hexadec(true) << ".size()==" << x.size() << std::endl;
 	auto t = x.size();
 	for (t = 0; t < x.size(); t++)

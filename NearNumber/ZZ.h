@@ -8,9 +8,6 @@
 #define ABS(x) ((x)<0?-(x):(x))
 //An abbreviation of "integer-integer unit type."
 typedef unsigned int iiunitt;
-/*
-The LHS operand must be greater than the RHS one.
-*/
 class idigits :public std::vector<iiunitt> {
 public:
 	idigits& addz(const idigits& x) {
@@ -30,7 +27,6 @@ public:
 			const auto
 				eaxn = pt & xpt,
 				eaxo = pt | xpt;
-			bool carry = false;
 			pt += xpt;
 			for (
 				size_t i = 0;
@@ -40,35 +36,39 @@ public:
 				if (!(eaxo & (1 << (b - 1 - i))))
 					break;
 				if (eaxn & (1 << (b - 1 - i))) {
-					carry = true;
+					idigits j;
+					j.resize(t + 1);
+					j.push_back(1);
+					addz(j);
 					break;
 				}
-			}
-			if (carry) {
-				idigits i;
-				i.resize(t + 1);
-				i.push_back(1);
-				addz(i);
 			}
 		}
 		return*this;
 	}
+	bool operator>(const idigits& x)const {
+		if (size() != x.size())
+			return size() > x.size();
+		else {
+			for (
+				idigits::const_reverse_iterator it = rbegin();
+				it < rend();
+				it++
+				) {
+				if (*it > x.at(it - rbegin()))
+					return true;
+			}
+			return false;
+		}
+	}
 	idigits& subz(idigits x) {
 		const auto
-			b = sizeof(iiunitt) * 8,
 			n = size(),
 			xn = x.size();
 		if (n < xn)
 			resize(xn);
-		for (
-			size_t t = 0;
-			t < xn;
-			t++
-			)
-			if (*(end() - 1 - t) < *(x.end() - 1 - t)) {
-				swap(x);
-				break;
-			}
+		if (operator>(x))
+			swap(x);
 		for (
 			size_t t = 0;
 			t < xn;
@@ -97,6 +97,12 @@ class ZZ {
 	}
 public:
 	bool sign = 0;
+
+	ZZ operator-()const {
+		ZZ t = *this;
+		t.sign = !t.sign;
+		return t;
+	}
 
 	/* Returns a reference to a vector (a flexible array) of mantissa. */
 	const idigits& mantissa(void) const {
@@ -254,6 +260,7 @@ public:
 			mant[t] &= x[t];
 		if (size() > x.size())
 			mant.resize(x.size());
+		shorten();
 		return*this;
 	}
 
@@ -281,6 +288,7 @@ public:
 				t++
 				)
 				mant.push_back(x[t]);
+		shorten();
 		return*this;
 	}
 
@@ -308,6 +316,7 @@ public:
 				t++
 				)
 				mant.push_back(x[t]);
+		shorten();
 		return*this;
 	}
 
@@ -387,18 +396,60 @@ public:
 	}
 
 	/* Takes the value of addition. */
-	ZZ& operator+=( ZZ x) {
-		if (sign == x.sign)
+	ZZ& operator+=(ZZ x) {
+		bool xsgn = x.sign;
+		if (sign == xsgn)
 			mant.addz(x.mantissa());
 		else {
 			mant.subz(x.mantissa());
 			x.sign = 0;
-			//TODO
+			if (operator<(x))
+				sign = xsgn;
 		}
+		shorten();
 		return*this;
 	}
 	ZZ operator+(const ZZ& x)const {
 		ZZ t = *this;
 		return t += x;
+	}
+	ZZ& operator-=(const ZZ& x) {
+		return operator+=(-x);
+	}
+	ZZ operator-(const ZZ& x)const {
+		ZZ t = *this;
+		return t -= x;
+	}
+
+	ZZ& operator*=(const ZZ& x) {
+		idigits::const_iterator
+			it = x.mantissa().begin(),
+			ii = it,
+			jt = x.mantissa().end();
+		idigits::iterator
+			iitt = mant.begin(),
+			iiii = iitt,
+			jjtt = mant.end();
+		const auto b = sizeof(*it) * 8;
+		ZZ temp = *this;
+		while (iitt < jjtt)
+			*(iitt++) = 0;
+		while (it < jt) {
+			for (
+				size_t q = 0;
+				q < b;
+				q++
+				)
+				if (*it & (1 << q))
+					operator+=(temp<<int((it - ii) * b + q));
+			it++;
+		}
+		sign = sign != x.sign;
+		shorten();
+		return*this;
+	}
+	ZZ operator*(const ZZ& x)const {
+		ZZ t = *this;
+		return t *= x;
 	}
 };

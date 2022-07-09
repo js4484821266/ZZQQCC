@@ -70,11 +70,6 @@ class iZ {
 public:
 	bool sign = 0;
 
-	/* Returns boolean sign: true if negative, and false otherwise. */
-	const bool& boolsgn(void) const {
-		return sign;
-	}
-
 	/* Returns a reference to a vector (a flexible array) of mantissa. */
 	const idigits& mantissa(void) const {
 		return mant;
@@ -121,12 +116,12 @@ public:
 
 	/* Initialises this to a copy of an object. */
 	iZ& operator=(iZ& x) {
-		sign = x.boolsgn();
+		sign = x.sign;
 		mant = x.mantissa();
 		return x;
 	}
 	iZ(const iZ& x) :
-		sign(x.boolsgn()),
+		sign(x.sign),
 		mant(x.mantissa()) {  }
 
 	/* Initialises this to an integer. */
@@ -208,7 +203,7 @@ public:
 
 	/* Checks if this has the value equal to that of an object. */
 	const bool operator==(const iZ& x)const {
-		return sign == x.boolsgn() && mant == x.mantissa();
+		return sign == x.sign && mant == x.mantissa();
 	}
 
 	/* Checks if this has the value NOT equal to that of an object. */
@@ -218,8 +213,8 @@ public:
 
 	/* Checks if this has a value greater than that of an object. */
 	const bool operator>(const iZ& x) const {
-		if (sign != x.boolsgn())
-			return x.boolsgn();
+		if (sign != x.sign)
+			return x.sign;
 		else if (size() != x.size())
 			return (size() > x.size()) != sign;
 		else {
@@ -250,7 +245,7 @@ public:
 
 	/* Takes the value of bitwise AND operation. */
 	iZ& operator&=(const iZ& x) {
-		sign = sign && x.boolsgn();
+		sign = sign && x.sign;
 		const size_t minn = MIN(size(), x.size());
 		for (
 			size_t t = 0;
@@ -271,7 +266,7 @@ public:
 
 	/* Takes the value of bitwise OR operation. */
 	iZ& operator|=(const iZ& x) {
-		sign = sign || x.boolsgn();
+		sign = sign || x.sign;
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
 		for (
@@ -298,7 +293,7 @@ public:
 
 	/* Takes the value of bitwise XOR operation. */
 	iZ& operator^=(const iZ& x) {
-		sign = sign != x.boolsgn();
+		sign = sign != x.sign;
 		const size_t minn = MIN(size(), x.size());
 		const auto xn = x.size();
 		for (

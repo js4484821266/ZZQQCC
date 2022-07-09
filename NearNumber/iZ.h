@@ -146,43 +146,30 @@ public:
 	}
 	iZ(const intmax_t& x = 0) { operator=(x); }
 
-	/* Casts this to a boolean. */
-	operator bool() const {
-		const size_t n = size();
-		for (
-			size_t t = 0;
-			t < n;
-			t++
-			)
-			if (operator[](t))
-				return true;
-		return false;
-	}
-
 	/* Returns arithmetic sign: -1 if negative, 1 if positive, and 0 otherwise. */
 	const intmax_t sgn(void) const {
-		if (operator bool())
+		if (size()==1&&!mant.at(0))
+			return 0;
+		else
 			if (sign)
 				return-1;
 			else
 				return 1;
-		else
-			return 0;
 	}
 
 	/* Checks if 0. */
 	const bool operator!()const {
-		return !operator bool();
+		return (size() == 1 && !mant.at(0));
 	}
 
 	/* Performs a logical AND comparison with an object. */
 	const bool operator&&(const iZ& x)const {
-		return operator bool() && (bool)x;
+		return!(operator!()||!x);
 	}
 
 	/* Performs a logical OR comparison with an object. */
 	const bool operator||(const iZ& x) const {
-		return operator bool() || (bool)x;
+		return!(operator!() && !x);
 	}
 
 	/* Checks if this has the value equal to that of an object. */
@@ -314,7 +301,7 @@ public:
 			amb = a % b,
 			bamb = b - amb;
 		size_t t = 0;
-		mant.resize(n + 1);
+		mant.push_back(0);
 		if (x < 0) {
 			if (amb) {
 				for (t = 0; t < n - adb; t++) {

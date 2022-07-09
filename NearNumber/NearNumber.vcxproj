@@ -145,7 +145,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="intbig.h" />
+    <ClInclude Include="iZ.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

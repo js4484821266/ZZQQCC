@@ -46,16 +46,16 @@ public:
 		}
 		return*this;
 	}
-	bool operator>(const idigits& x)const {
+	bool operator<(const idigits& x)const {
 		if (size() != x.size())
-			return size() > x.size();
+			return size() < x.size();
 		else {
 			for (
 				idigits::const_reverse_iterator it = rbegin();
 				it < rend();
 				it++
 				) {
-				if (*it > x.at(it - rbegin()))
+				if (*it < x.at(it - rbegin()))
 					return true;
 			}
 			return false;
@@ -67,7 +67,7 @@ public:
 			xn = x.size();
 		if (n < xn)
 			resize(xn);
-		if (operator>(x))
+		if (operator<(x))
 			swap(x);
 		for (
 			size_t t = 0;
@@ -441,7 +441,7 @@ public:
 				q++
 				)
 				if (*it & (1 << q))
-					operator+=(temp<<int((it - ii) * b + q));
+					operator+=(temp << int((it - ii) * b + q));
 			it++;
 		}
 		sign = sign != x.sign;

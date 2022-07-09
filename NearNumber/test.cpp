@@ -59,8 +59,8 @@ int main(void) {
 	std::cout << x.hexadec(true) << ".bit(" << 58 << ")==" << x.bit(58) << std::endl;
 	std::cout << std::endl;
 
-	x = ZZ(100000000000000);
+	x = ZZ(1) << 64;
 	std::cout << x.hexadec(true) << std::endl;
-	std::cout << (x * (ZZ(100000000000000))).hexadec(true) << std::endl;
+	std::cout << (x - 0x0911772723271812).hexadec(true) << std::endl;
 	return 0;
 }

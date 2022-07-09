@@ -7,24 +7,28 @@
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
 typedef unsigned int iiunitt;
+/*
+The LHS operand must be greater than the RHS one.
+*/
 class idigits :public std::vector<iiunitt> {
 public:
-	idigits& addz(idigits& x) {
-		const auto 
-			n = this->size(),
-			xn = x.size(),
-			minn=MIN(n,xn),
-			b=sizeof(iiunitt)*8;
-		if(n<xn)
-			this->resize(xn);
+	idigits& addz(const idigits& x) {
+		const auto
+			b = sizeof(iiunitt) * 8;
+		idigits::iterator
+			it0 = this->begin(),
+			it0z = this->end();
+		idigits::const_iterator
+			itx = x.begin(),
+			itxz = x.end();
 		for (
-			size_t t = 0;
-			t < minn;
-			t++
+			it0 = this->begin(), itx = x.begin();
+			it0 != it0z && itx != itxz;
+			it0++, itx++
 			) {
-			const auto 
-				eaxn = this->operator[](t) & x[t],
-				eaxo = this->operator[](t) | x[t];
+			const auto
+				eaxn = *it0 & *itx,
+				eaxo = *it0 | *itx;
 			bool carry = false;
 			for (
 				size_t i = 0;
@@ -40,7 +44,7 @@ public:
 			}
 			if (carry) {
 				idigits i;
-				i.resize(t + 1);
+				i.resize(it0 - this->begin() + 1);
 				i.push_back(1);
 				addz(i);
 			}

@@ -160,12 +160,12 @@ public:
 	//Takes a copy of x.
 	const ZZ& operator=(const ZZ&);
 	//Constructor when x is a variable of this class.
-	ZZ(const ZZ& );
+	ZZ(const ZZ&);
 
 	//Assigns x to this, where x is a common integer.
 	const intmax_t& operator=(const intmax_t&);
 	//Default constructor
-	ZZ(const intmax_t& );
+	ZZ(const intmax_t&);
 
 	//Returns absolute value of this.
 	ZZ abs(void)const;

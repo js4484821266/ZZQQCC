@@ -181,6 +181,10 @@ public:
 	ZZ& operator-=(const ZZ&);
 	//Returns the result of subtraction of x from this.
 	ZZ operator-(const ZZ&)const;
+	//Increases this by 1.
+	ZZ& operator++();
+	//Decreases this by 1.
+	ZZ& operator--();
 
 	/* This takes the value of bitwise AND operation. */
 	ZZ& operator&=(const ZZ&);
@@ -340,11 +344,12 @@ ZZ& ZZ::operator+=(const ZZ& x) {
 	if (sign == x.sign)
 		mant.addz(x.mantissa());
 	else {
-		mant.difz(x.mantissa());
 		if (abs() < x.abs())
 			sign = x.sign;
+		mant.difz(x.mantissa());
 	}
 	mant.shorten();
+	sign = sign && !operator!();
 	return*this;
 }
 ZZ ZZ::operator+(const ZZ& x)const {
@@ -357,6 +362,12 @@ ZZ& ZZ::operator-=(const ZZ& x) {
 ZZ ZZ::operator-(const ZZ& x)const {
 	ZZ t = *this;
 	return t -= x;
+}
+ZZ& ZZ::operator++() {
+	return operator+=(1);
+}
+ZZ& ZZ::operator--() {
+	return operator-=(1);
 }
 ZZ& ZZ::operator&=(const ZZ& x) {
 	sign = sign && x.sign;

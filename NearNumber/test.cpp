@@ -1,26 +1,26 @@
 #include<iostream>
 #include"ZZ.h"
 int main(void) {
-	ZZ x = 1;
-	while (x + 1 >= 0) {
-		std::cout << x.hexadec() << ".sgn()==" << x.sgn() << std::endl;
-		std::cout << "!" << x.hexadec() << "==" << !x << std::endl;
-		std::cout << x.hexadec() << "&&false==" << (x && false) << std::endl;
-		std::cout << x.hexadec() << "&&true==" << (x && true) << std::endl;
-		std::cout << x.hexadec() << "||false==" << (x || false) << std::endl;
-		std::cout << x.hexadec() << "||true==" << (x || true) << std::endl;
-		std::cout << x.hexadec() << "==1==" << (x == 1) << std::endl;
-		std::cout << x.hexadec() << "==0==" << (x == 0) << std::endl;
-		std::cout << x.hexadec() << "==-1==" << (x == -1) << std::endl;
-		std::cout << x.hexadec() << "!=1==" << (x != 1) << std::endl;
-		std::cout << x.hexadec() << "!=0==" << (x != 0) << std::endl;
-		std::cout << x.hexadec() << "!=-1==" << (x != -1) << std::endl;
-		std::cout << x.hexadec() << ">1==" << (x > 1) << std::endl;
-		std::cout << x.hexadec() << ">=1==" << (x >= 1) << std::endl;
-		std::cout << x.hexadec() << "<1==" << (x < 1) << std::endl;
-		std::cout << x.hexadec() << "<=1==" << (x <= 1) << std::endl;
+	ZZ x = -INT32_MAX;
+	while (x - INT32_MAX <= 0) {
+		std::cout << x.hexadec(true) << ".sgn()        ==        " << x.sgn() << std::endl;
+		std::cout << "!" << x.hexadec(true) << "        ==        " << !x << std::endl;
+		std::cout << x.hexadec(true) << "&&false        ==        " << (x && false) << std::endl;
+		std::cout << x.hexadec(true) << "&&true        ==        " << (x && true) << std::endl;
+		std::cout << x.hexadec(true) << "||false        ==        " << (x || false) << std::endl;
+		std::cout << x.hexadec(true) << "||true        ==        " << (x || true) << std::endl;
+		for (int t = -1; t <= 1; t++)
+			std::cout << x.hexadec(true) << "==" << t << "        ==        " << (x == t) << std::endl;
+		for (int t = -1; t <= 1; t++)
+			std::cout << x.hexadec(true) << "!=" << t << "        ==        " << (x != t) << std::endl;
+		for (int t = -1; t <= 1; t++) {
+			std::cout << x.hexadec(true) << ">" << t << "        ==        " << (x > t) << std::endl;
+			std::cout << x.hexadec(true) << ">=" << t << "        ==        " << (x >= t) << std::endl;
+			std::cout << x.hexadec(true) << "<" << t << "        ==        " << (x < t) << std::endl;
+			std::cout << x.hexadec(true) << "<=" << t << "        ==        " << (x <= t) << std::endl;
+		}
 		std::cout << std::endl;
-		x -= 1;
+		x += INT32_MAX;
 	}
 	return 0;
 }

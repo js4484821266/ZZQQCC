@@ -33,5 +33,7 @@ int main(void) {
 		"6373289912154831438167899885040445364023527381951378636564391212010397122822"
 		"120720357"
 	);
+	std::cout << x.hexadec(true) << std::endl;
+	std::cout << x.size() << std::endl;
 	return 0;
 }

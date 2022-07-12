@@ -62,7 +62,6 @@ idigits& idigits::addz(const idigits& x) {
 			}
 		}
 	}
-	shorten();
 	return*this;
 }
 bool idigits::operator<(const idigits& x)const {
@@ -102,7 +101,6 @@ idigits& idigits::difz(idigits x) {
 			difz(i);
 		}
 	}
-	shorten();
 	return*this;
 }
 
@@ -537,11 +535,42 @@ ZZ ZZ::operator*(const ZZ& x)const {
 }
 ZZ& ZZ::operator=(const std::string& x) {
 	this->operator=(0);
-	std::string::const_iterator
-		it = x.begin(),
-		jt = x.end();
 	unsigned int base = 10;
-
+	std::string::size_type found = x.find_first_of("0123456789");
+	if (found == std::string::npos)
+		return*this;
+	std::string::const_iterator
+		it = x.begin() + found,
+		jt = x.end();
+	if (!found)
+		sign = false;
+	else
+		sign = *(it - 1) == '-';
+	if (*it == '0')
+		switch (*(it + 1)) {
+		case 'X':case 'x':
+			base = 16;
+			it += 2;
+			break;
+		case'B':case'b':
+			base = 2;
+			it += 2;
+			break;
+		default:
+			base = 8;
+			it++;
+		}
+	std::string digits = std::string("0123456789abcdef").substr(0, base) + " _";
+	while (it < jt) {
+		int d = digits.find(*it | ('A' <= *it && *it <= 'F') << 5);
+		if ( d== std::string::npos)
+			break;
+		else {
+			this->operator*=(base);
+			this->operator+=(d);
+		}
+		it++;
+	}
 	return*this;
 }
 ZZ::ZZ(const std::string& x) { operator=(x); }

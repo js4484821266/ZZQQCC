@@ -563,7 +563,7 @@ ZZ& ZZ::operator=(const std::string& x) {
 	std::string digits = std::string("0123456789abcdef").substr(0, base) + " _";
 	while (it < jt) {
 		int d = digits.find(*it | ('A' <= *it && *it <= 'F') << 5);
-		if ( d== std::string::npos)
+		if (d == std::string::npos)
 			break;
 		else {
 			this->operator*=(base);

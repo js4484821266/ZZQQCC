@@ -1,3 +1,4 @@
+#include<ctime>
 #include<iostream>
 #include"ZZ.h"
 int main(void) {
@@ -22,6 +23,7 @@ int main(void) {
 		std::cout << std::endl;
 		x += INT32_MAX;
 	}
+	auto t = clock();
 	x = std::string(
 		"2519590847565789349402718324004839857142928212620403202777713783604366202070"
 		"7595556264018525880784406918290641249515082189298559149176184502808489120072"
@@ -33,7 +35,8 @@ int main(void) {
 		"6373289912154831438167899885040445364023527381951378636564391212010397122822"
 		"120720357"
 	);
+	std::cout << (clock() - t) << std::endl;
 	std::cout << x.hexadec(true) << std::endl;
-	std::cout << x.size() << std::endl;
+	std::cout << (clock() - t) << std::endl;
 	return 0;
 }

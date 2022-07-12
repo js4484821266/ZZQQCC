@@ -214,6 +214,8 @@ public:
 	ZZ& operator*=(const ZZ&);
 	//Returns the result of multiplication of this and x.
 	ZZ operator*(const ZZ&)const;
+	ZZ& operator=(const std::string& x);
+	ZZ(const std::string& x);
 
 	/* Performs division by x.
 	   This takes the remainder and quotient_here takes the quotient. */
@@ -533,6 +535,16 @@ ZZ ZZ::operator*(const ZZ& x)const {
 	ZZ t = *this;
 	return t *= x;
 }
+ZZ& ZZ::operator=(const std::string& x) {
+	this->operator=(0);
+	std::string::const_iterator
+		it = x.begin(),
+		jt = x.end();
+	unsigned int base = 10;
+
+	return*this;
+}
+ZZ::ZZ(const std::string& x) { operator=(x); }
 ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 	quotient_here = 0;
 	const size_t b = sizeof(iiunitt) * 8;

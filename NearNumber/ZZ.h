@@ -218,9 +218,6 @@ public:
 	/* Performs division by x.
 	   This takes the remainder and quotient_here takes the quotient. */
 	ZZ& QR(const ZZ&, ZZ&);
-
-	//Returns a boolean bit in the specified position.
-	const bool bit(const size_t&) const;
 };
 
 const idigits& ZZ::mantissa(void) const {
@@ -562,7 +559,7 @@ ZZ& ZZ::operator=(const std::string& x) {
 		}
 	std::string digits = std::string("0123456789abcdef").substr(0, base) + " _";
 	while (it < jt) {
-		int d = digits.find(*it | ('A' <= *it && *it <= 'F') << 5);
+		auto d = digits.find(*it | ('A' <= *it && *it <= 'F') << 5);
 		if (d == std::string::npos)
 			break;
 		else {
@@ -606,7 +603,4 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 	}
 	mant.shorten();
 	return*this;
-}
-const bool ZZ::bit(const size_t& index) const {
-	return!!(mant.at(index / (8 * sizeof(iiunitt))) & (1 << (index % (8 * sizeof(iiunitt)))));
 }

@@ -2,3 +2,5 @@
 2. Values and functions be constants as many as possible.
 3. Use their references to save more space.
 4. Variables referred to must be constants to keep integrity.
+
+.. Always try to find how to make your code better.

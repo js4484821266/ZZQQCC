@@ -1,4 +1,4 @@
-1. Declare variables so that the process takes not much time.
+1. Declare variables so that loops take not much time.
 2. Values and functions be constants as many as possible.
 3. Use their references to save more space.
 4. Variables referred to must be constants to keep integrity.

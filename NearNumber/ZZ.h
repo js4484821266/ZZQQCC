@@ -569,11 +569,13 @@ ZZ& ZZ::operator=(const std::string& x) {
 			base = 8;
 			it++;
 		}
-	std::string digits = std::string("0123456789abcdef").substr(0, base) + " _";
+	std::string filler = " _";
+	std::string digits = std::string("0123456789abcdef").substr(0, base) + filler;
 	while (it < jt) {
 		auto d = digits.find(*it | ('A' <= *it && *it <= 'F') << 5);
 		if (d == std::string::npos)
 			break;
+		else if (filler.find(*it) != std::string::npos);
 		else {
 			this->operator*=(base);
 			this->operator+=(d);

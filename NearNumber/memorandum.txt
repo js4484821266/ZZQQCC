@@ -1,0 +1,2 @@
+1. Declare variables so that the process takes not much time.
+2. Values be constants as many as possible.

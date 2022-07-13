@@ -218,6 +218,18 @@ public:
 	/* Performs division by x.
 	   This takes the remainder and quotient_here takes the quotient. */
 	ZZ& QR(const ZZ&, ZZ&);
+	/* Not recommended.
+	   Takes and returns the result of division of this and x. */
+	ZZ operator/=(const ZZ& x);
+	/* Not recommended.
+	   Returns the result of division of this and x. */
+	ZZ operator/(const ZZ& x) const;
+	/* Not recommended.
+	   Takes and returns the remainder of division of this and x. */
+	ZZ operator%=(const ZZ& x);
+	/* Not recommended.
+	   Returns the remainder of division of this and x. */
+	ZZ operator%(const ZZ& x) const;
 };
 
 const idigits& ZZ::mantissa(void) const {
@@ -603,4 +615,23 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 	}
 	mant.shorten();
 	return*this;
+}
+ZZ ZZ::operator/=(const ZZ& x) {
+	ZZ t = *this, u;
+	t.QR(x, u);
+	operator=(u);
+	return u;
+}
+ZZ ZZ::operator/(const ZZ& x)const {
+	ZZ t = *this;
+	return t /= x;
+}
+ZZ ZZ::operator%=(const ZZ& x) {
+	ZZ t = *this, u;
+	t.QR(x, u);
+	return t;
+}
+ZZ ZZ::operator%(const ZZ& x)const {
+	ZZ t = *this;
+	return t %= x;
 }

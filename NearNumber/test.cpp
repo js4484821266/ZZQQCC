@@ -17,24 +17,33 @@ int main(void) {
 	const ZZ
 		y(x);
 	while (x + y >= 0) {
-		std::cout << x.hexadec(true) << ".sgn()        ==        " << x.sgn() << std::endl;
-		std::cout << "!" << x.hexadec(true) << "        ==        " << !x << std::endl;
-		std::cout << x.hexadec(true) << "&&false        ==        " << (x && false) << std::endl;
-		std::cout << x.hexadec(true) << "&&true        ==        " << (x && true) << std::endl;
-		std::cout << x.hexadec(true) << "||false        ==        " << (x || false) << std::endl;
-		std::cout << x.hexadec(true) << "||true        ==        " << (x || true) << std::endl;
+		std::cout << x.hexadec(true) << ".sgn()        ==        " << x.sgn() << std::endl
+			<< "!" << x.hexadec(true) << "        ==        " << !x << std::endl
+			<< x.hexadec(true) << "&&false        ==        " << (x && false) << std::endl
+			<< x.hexadec(true) << "&&true        ==        " << (x && true) << std::endl
+			<< x.hexadec(true) << "||false        ==        " << (x || false) << std::endl
+			<< x.hexadec(true) << "||true        ==        " << (x || true) << std::endl;
 		for (int t = -1; t <= 1; t++)
 			std::cout << x.hexadec(true) << "==" << t << "        ==        " << (x == t) << std::endl;
 		for (int t = -1; t <= 1; t++)
 			std::cout << x.hexadec(true) << "!=" << t << "        ==        " << (x != t) << std::endl;
 		for (int t = -1; t <= 1; t++) {
-			std::cout << x.hexadec(true) << ">" << t << "        ==        " << (x > t) << std::endl;
-			std::cout << x.hexadec(true) << ">=" << t << "        ==        " << (x >= t) << std::endl;
-			std::cout << x.hexadec(true) << "<" << t << "        ==        " << (x < t) << std::endl;
-			std::cout << x.hexadec(true) << "<=" << t << "        ==        " << (x <= t) << std::endl;
+			std::cout << x.hexadec(true) << ">" << t << "        ==        " << (x > t) << std::endl
+				<< x.hexadec(true) << ">=" << t << "        ==        " << (x >= t) << std::endl
+				<< x.hexadec(true) << "<" << t << "        ==        " << (x < t) << std::endl
+				<< x.hexadec(true) << "<=" << t << "        ==        " << (x <= t) << std::endl;
 		}
 		std::cout << std::endl;
 		x -= y;
 	}
+	std::cout
+		<< x.abs().hexadec(true) << std::endl;
+	ZZ z(y * 3);
+	std::cout
+		<< z.hexadec() << std::endl;
+	//x += z;
+	x %= y;
+	std::cout
+		<< x.hexadec(true) << std::endl;
 	return 0;
 }

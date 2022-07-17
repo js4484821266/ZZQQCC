@@ -130,9 +130,6 @@ public:
 	//Returns SGN function.
 	const intmax_t sgn(void) const;
 
-	//Returns this as a usual integer.
-	intmax_t operator+();
-
 	//Checks if this is 0.
 	const bool operator!()const;
 
@@ -255,18 +252,6 @@ const intmax_t ZZ::sgn(void) const {
 			return-1;
 		else
 			return 1;
-}
-intmax_t ZZ::operator+() {
-	const auto bb = MAX(1, sizeof(intmax_t) / sizeof(iiunitt));
-	auto t = bb;
-	intmax_t buf = 0;
-	for (
-		t = 0;
-		t < bb;
-		t++
-		)
-		buf |= intmax_t(mant.at(t)) << sizeof(iiunitt) * 8;
-	return buf * sgn();
 }
 const bool ZZ::operator!()const {
 	return (size() == 1 && !mant.at(0));

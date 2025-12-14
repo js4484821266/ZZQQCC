@@ -23,8 +23,10 @@ public:
 
 	//Adds x to this.
 	i_digits& z_add(const i_digits&);
+
 	//Checks if x is greater than this.
 	bool operator<(const i_digits&) const;
+
 	//Takes difference of this and x.
 	i_digits& z_diff(i_digits);
 };

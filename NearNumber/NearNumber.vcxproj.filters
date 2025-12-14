@@ -23,7 +23,7 @@
     <ClInclude Include="ZZ.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="idigits.h">
+    <ClInclude Include="i_digits.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,10 +5,10 @@
 #define SGN(x) ((x)<0?-1:1)
 #define ABS(x) ((x)<0?-(x):(x))
 //An abbreviation of "integer-integer unit type."
-using iiunitt = unsigned int;
+using i_i_unit_t = unsigned int;
 
-//A class for addition and its inverse in base 2**(sizeof(iiunitt)*8)
-class idigits : public std::vector<iiunitt>
+//A class for addition and its inverse in base 2**(sizeof(i_i_unit_t)*8)
+class i_digits : public std::vector<i_i_unit_t>
 {
 public:
 	//Reduces length of this so that save more space.
@@ -22,17 +22,17 @@ public:
 	}
 
 	//Adds x to this.
-	idigits& addz(const idigits&);
+	i_digits& z_add(const i_digits&);
 	//Checks if x is greater than this.
-	bool operator<(const idigits&) const;
+	bool operator<(const i_digits&) const;
 	//Takes difference of this and x.
-	idigits& difz(idigits);
+	i_digits& z_diff(i_digits);
 };
 
-idigits& idigits::addz(const idigits& x)
+i_digits& i_digits::z_add(const i_digits& x)
 {
 	constexpr auto
-		nbits = sizeof(iiunitt) * 8;
+		nbits = sizeof(i_i_unit_t) * 8;
 	const auto
 		n = size(),
 		xn = x.size();
@@ -60,10 +60,10 @@ idigits& idigits::addz(const idigits& x)
 				break;
 			if (eaxn & (1 << (nbits - 1 - i)))
 			{
-				idigits j;
+				i_digits j;
 				j.resize(t + 1);
 				j.push_back(1);
-				addz(j);
+				z_add(j);
 				break;
 			}
 		}
@@ -71,7 +71,7 @@ idigits& idigits::addz(const idigits& x)
 	return *this;
 }
 
-bool idigits::operator<(const idigits& x) const
+bool i_digits::operator<(const i_digits& x) const
 {
 	if (size() != x.size())
 		return size() < x.size();
@@ -87,7 +87,7 @@ bool idigits::operator<(const idigits& x) const
 	return false;
 }
 
-idigits& idigits::difz(idigits x)
+i_digits& i_digits::z_diff(i_digits x)
 {
 	const auto
 		n = size(),
@@ -106,10 +106,10 @@ idigits& idigits::difz(idigits x)
 		at(t) -= x.at(t);
 		if (att < x.at(t))
 		{
-			idigits i;
+			i_digits i;
 			i.resize(t + 1);
 			i.push_back(1);
-			difz(i);
+			z_diff(i);
 		}
 	}
 	return *this;

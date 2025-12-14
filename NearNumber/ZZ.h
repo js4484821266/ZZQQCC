@@ -1,7 +1,7 @@
 #pragma once
 #include<cstdint>
 #include<string>
-#include"idigits.h"
+#include"i_digits.h"
 /*
 'ZZ' is an extended integer class.
 This class has been named as 'ZZ' because it is to represent more integers,
@@ -9,21 +9,21 @@ and 'ZZ' seems like the blackboard bold letter of Z.
 */
 class ZZ {
 private:
-	idigits mant;
+	i_digits mant;
 public:
 	//Boolean sign.
 	bool sign = 0;
 
 	//Returns a reference to the mantissa.
-	const idigits& mantissa(void) const;
+	const i_digits& mantissa(void) const;
 
 	//Returns the number of elements to represent the integer.
 	const size_t size(void)const;
 
 	//Returns a constant reference to a specified element of the mantissa.
-	const iiunitt& operator[](const size_t&) const;
+	const i_i_unit_t& operator[](const size_t&) const;
 	//Returns a reference to a specified element of the mantissa.
-	iiunitt& operator[](const size_t&);
+	i_i_unit_t& operator[](const size_t&);
 
 	//Returns SGN function.
 	const intmax_t sgn(void) const;
@@ -130,16 +130,16 @@ public:
 	ZZ operator%(const ZZ& x) const;
 };
 
-const idigits& ZZ::mantissa(void) const {
+const i_digits& ZZ::mantissa(void) const {
 	return mant;
 }
 const size_t ZZ::size(void)const {
 	return mant.size();
 }
-const iiunitt& ZZ::operator[](const size_t& index) const {
+const i_i_unit_t& ZZ::operator[](const size_t& index) const {
 	return mant.at(index);
 }
-iiunitt& ZZ::operator[](const size_t& index) {
+i_i_unit_t& ZZ::operator[](const size_t& index) {
 	return mant.at(index);
 }
 const intmax_t ZZ::sgn(void) const {
@@ -169,7 +169,7 @@ const bool ZZ::operator!=(const ZZ& x)const {
 const std::string ZZ::hexadec(bool prefix = false)const {
 	std::string out;
 	const auto n = size();
-	const size_t nx = sizeof(iiunitt) * 2;
+	const size_t nx = sizeof(i_i_unit_t) * 2;
 	char temp[6], * tempp = new char[nx + 1 + 2 + 1];
 	sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mant.back());
 	out += tempp;
@@ -218,9 +218,9 @@ ZZ::ZZ(const ZZ& x) :
 	sign(x.sign),
 	mant(x.mantissa()) {  }
 const intmax_t& ZZ::operator=(const intmax_t& x) {
-	const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(iiunitt), 1);
+	const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(i_i_unit_t), 1);
 	const uintmax_t a = ABS(x);
-	const auto b = sizeof(iiunitt) * 8;
+	const auto b = sizeof(i_i_unit_t) * 8;
 	sign = x < 0;
 	mant.clear();
 	for (
@@ -229,7 +229,7 @@ const intmax_t& ZZ::operator=(const intmax_t& x) {
 		t++
 		)
 		mant.push_back(
-			iiunitt(
+			i_i_unit_t(
 				a >> (b * t)
 			)
 		);
@@ -249,11 +249,11 @@ ZZ ZZ::operator-()const {
 }
 ZZ& ZZ::operator+=(const ZZ& x) {
 	if (sign == x.sign)
-		mant.addz(x.mantissa());
+		mant.z_add(x.mantissa());
 	else {
 		if (abs() < x.abs())
 			sign = x.sign;
-		mant.difz(x.mantissa());
+		mant.z_diff(x.mantissa());
 	}
 	mant.shorten();
 	sign = sign && !operator!();
@@ -345,7 +345,7 @@ ZZ ZZ::operator^(const ZZ& x) const {
 ZZ& ZZ::operator<<=(const intmax_t& x) {
 	const size_t
 		a = ABS(x),
-		b = sizeof(iiunitt) * 8,
+		b = sizeof(i_i_unit_t) * 8,
 		adb = a / b,
 		n = size(),
 		amb = a % b,
@@ -355,7 +355,7 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 	if (x < 0) {
 		if (amb) {
 			for (t = 0; t < n - adb; t++) {
-				iiunitt
+				i_i_unit_t
 					& madbt = mant[adb + t],
 					& madbt1 = mant[adb + t + 1];
 				mant[t] = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
@@ -365,7 +365,7 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 		}
 		else {
 			for (t = 0; t < n - adb; t++) {
-				iiunitt& madbt = mant[adb + t];
+				i_i_unit_t& madbt = mant[adb + t];
 				mant[t] = madbt;
 				madbt = 0;
 			}
@@ -377,11 +377,11 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 		mant.resize(n + adb + 1);
 		if (amb) {
 			for (t = 0; t < n; t++) {
-				iiunitt
+				i_i_unit_t
 					& mzadbt = mant[n - 1 + adb - t],
 					& mzadbt1 = mant[n - 1 + adb - t + 1],
 					& mzt = mant[n - 1 - t];
-				const iiunitt temp = mzt;
+				const i_i_unit_t temp = mzt;
 				mzt = 0;
 				mzadbt1 |= (temp >> bamb) & ((1 << amb) - 1);
 				mzadbt |= temp << amb;
@@ -389,7 +389,7 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 		}
 		else {
 			for (t = 0; t < n; t++) {
-				iiunitt& mzt = mant[n - 1 - t];
+				i_i_unit_t& mzt = mant[n - 1 - t];
 				mant[n - 1 - t + adb] = mzt;
 				mzt = 0;
 			}
@@ -410,11 +410,11 @@ ZZ ZZ:: operator>>(const intmax_t& x) const {
 	return t >>= x;
 }
 ZZ& ZZ::operator*=(const ZZ& x) {
-	idigits::const_iterator
+	i_digits::const_iterator
 		it = x.mantissa().begin(),
 		ii = it,
 		jt = x.mantissa().end();
-	idigits::iterator
+	i_digits::iterator
 		iitt = mant.begin(),
 		iiii = iitt,
 		jjtt = mant.end();
@@ -485,7 +485,7 @@ ZZ& ZZ::operator=(const std::string& x) {
 ZZ::ZZ(const std::string& x) { operator=(x); }
 ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 	quotient_here = 0;
-	const size_t b = sizeof(iiunitt) * 8;
+	const size_t b = sizeof(i_i_unit_t) * 8;
 	ZZ a = x.abs();
 	while (abs() >= a) {
 		size_t
@@ -501,7 +501,7 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 		if (this->operator<(a << temp))
 			temp--;
 		quotient_here |= ZZ(1) << temp;
-		mant.difz((a << temp).mantissa());
+		mant.z_diff((a << temp).mantissa());
 		mant.shorten();
 	}
 	// 10001/10000=1+1/10000

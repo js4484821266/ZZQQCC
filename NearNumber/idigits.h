@@ -31,8 +31,9 @@ public:
 
 idigits& idigits::addz(const idigits& x)
 {
+	constexpr auto
+		nbits = sizeof(iiunitt) * 8;
 	const auto
-		b = sizeof(iiunitt) * 8,
 		n = size(),
 		xn = x.size();
 	if (n < xn)
@@ -51,13 +52,13 @@ idigits& idigits::addz(const idigits& x)
 		pt += xpt;
 		for (
 			size_t i = 0;
-			i < b;
+			i < nbits;
 			i++
 		)
 		{
-			if (!(eaxo & (1 << (b - 1 - i))))
+			if (!(eaxo & (1 << (nbits - 1 - i))))
 				break;
-			if (eaxn & (1 << (b - 1 - i)))
+			if (eaxn & (1 << (nbits - 1 - i)))
 			{
 				idigits j;
 				j.resize(t + 1);

@@ -9,7 +9,7 @@ and 'ZZ' seems like the blackboard bold letter of Z.
 */
 class ZZ {
 private:
-	i_digits mant;
+	i_digits mantissa_;
 public:
 	//Boolean sign.
 	bool sign = 0;
@@ -131,16 +131,16 @@ public:
 };
 
 const i_digits& ZZ::mantissa(void) const {
-	return mant;
+	return mantissa_;
 }
 const size_t ZZ::size(void)const {
-	return mant.size();
+	return mantissa_.size();
 }
 const i_i_unit_t& ZZ::operator[](const size_t& index) const {
-	return mant.at(index);
+	return mantissa_.at(index);
 }
 i_i_unit_t& ZZ::operator[](const size_t& index) {
-	return mant.at(index);
+	return mantissa_.at(index);
 }
 const intmax_t ZZ::sgn(void) const {
 	if (this->operator!())
@@ -152,7 +152,7 @@ const intmax_t ZZ::sgn(void) const {
 			return 1;
 }
 const bool ZZ::operator!()const {
-	return (size() == 1 && !mant.at(0));
+	return (size() == 1 && !mantissa_.at(0));
 }
 const bool ZZ::operator&&(const ZZ& x)const {
 	return!(operator!() || !x);
@@ -161,7 +161,7 @@ const bool ZZ::operator||(const ZZ& x) const {
 	return!(operator!() && !x);
 }
 const bool ZZ::operator==(const ZZ& x)const {
-	return sign == x.sign && mant == x.mantissa();
+	return sign == x.sign && mantissa_ == x.mantissa();
 }
 const bool ZZ::operator!=(const ZZ& x)const {
 	return!operator==(x);
@@ -171,7 +171,7 @@ const std::string ZZ::hexadec(bool prefix = false)const {
 	const auto n = size();
 	const size_t nx = sizeof(i_i_unit_t) * 2;
 	char temp[6], * tempp = new char[nx + 1 + 2 + 1];
-	sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mant.back());
+	sprintf_s(tempp, nx + 1 + 2 + 1, "%s%s%X", sign ? "-" : "", prefix ? "0x" : "", mantissa_.back());
 	out += tempp;
 	for (
 		size_t t = 0;
@@ -179,7 +179,7 @@ const std::string ZZ::hexadec(bool prefix = false)const {
 		t++
 		) {
 		sprintf_s(temp, 6, "%%0%zuX", nx);
-		sprintf_s(tempp, nx + 1, temp, mant[n - 2 - t]);
+		sprintf_s(tempp, nx + 1, temp, mantissa_[n - 2 - t]);
 		out += tempp;
 	}
 	delete[]tempp;
@@ -211,29 +211,29 @@ const bool ZZ::operator<=(const ZZ& x)const {
 }
 const ZZ& ZZ::operator=(const ZZ& x) {
 	sign = x.sign;
-	mant = x.mantissa();
+	mantissa_ = x.mantissa();
 	return x;
 }
 ZZ::ZZ(const ZZ& x) :
 	sign(x.sign),
-	mant(x.mantissa()) {  }
+	mantissa_(x.mantissa()) {  }
 const intmax_t& ZZ::operator=(const intmax_t& x) {
 	const size_t nbyte = MAX(sizeof(intmax_t) / sizeof(i_i_unit_t), 1);
 	const uintmax_t a = ABS(x);
 	const auto b = sizeof(i_i_unit_t) * 8;
 	sign = x < 0;
-	mant.clear();
+	mantissa_.clear();
 	for (
 		size_t t = 0;
 		t < nbyte;
 		t++
 		)
-		mant.push_back(
+		mantissa_.push_back(
 			i_i_unit_t(
 				a >> (b * t)
 			)
 		);
-	mant.shorten();
+	mantissa_.shorten();
 	return x;
 }
 ZZ::ZZ(const intmax_t& x = 0) { operator=(x); }
@@ -249,13 +249,13 @@ ZZ ZZ::operator-()const {
 }
 ZZ& ZZ::operator+=(const ZZ& x) {
 	if (sign == x.sign)
-		mant.z_add(x.mantissa());
+		mantissa_.z_add(x.mantissa());
 	else {
 		if (abs() < x.abs())
 			sign = x.sign;
-		mant.z_diff(x.mantissa());
+		mantissa_.z_diff(x.mantissa());
 	}
-	mant.shorten();
+	mantissa_.shorten();
 	sign = sign && !operator!();
 	return*this;
 }
@@ -284,10 +284,10 @@ ZZ& ZZ::operator&=(const ZZ& x) {
 		t < minn;
 		t++
 		)
-		mant.at(t) &= x[t];
+		mantissa_.at(t) &= x[t];
 	if (size() > x.size())
-		mant.resize(x.size());
-	mant.shorten();
+		mantissa_.resize(x.size());
+	mantissa_.shorten();
 	return*this;
 }
 ZZ ZZ::operator&(const ZZ& x)  const {
@@ -303,15 +303,15 @@ ZZ& ZZ:: operator|=(const ZZ& x) {
 		t < minn;
 		t++
 		)
-		mant.at(t) |= x[t];
+		mantissa_.at(t) |= x[t];
 	if (size() < xn)
 		for (
 			size_t t = size();
 			t < xn;
 			t++
 			)
-			mant.push_back(x[t]);
-	mant.shorten();
+			mantissa_.push_back(x[t]);
+	mantissa_.shorten();
 	return*this;
 }
 ZZ ZZ::operator|(const ZZ& x) const {
@@ -327,15 +327,15 @@ ZZ& ZZ::operator^=(const ZZ& x) {
 		t < minn;
 		t++
 		)
-		mant.at(t) ^= x[t];
+		mantissa_.at(t) ^= x[t];
 	if (size() < xn)
 		for (
 			size_t t = size();
 			t < xn;
 			t++
 			)
-			mant.push_back(x[t]);
-	mant.shorten();
+			mantissa_.push_back(x[t]);
+	mantissa_.shorten();
 	return*this;
 }
 ZZ ZZ::operator^(const ZZ& x) const {
@@ -351,36 +351,36 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 		amb = a % b,
 		bamb = b - amb;
 	size_t t = 0;
-	mant.push_back(0);
+	mantissa_.push_back(0);
 	if (x < 0) {
 		if (amb) {
 			for (t = 0; t < n - adb; t++) {
 				i_i_unit_t
-					& madbt = mant[adb + t],
-					& madbt1 = mant[adb + t + 1];
-				mant[t] = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
+					& madbt = mantissa_[adb + t],
+					& madbt1 = mantissa_[adb + t + 1];
+				mantissa_[t] = (madbt1 << bamb) | ((madbt >> amb) & ((1 << bamb) - 1));
 				madbt1 &= -(1 << amb);
 				madbt &= ((1 << amb) - 1);
 			}
 		}
 		else {
 			for (t = 0; t < n - adb; t++) {
-				i_i_unit_t& madbt = mant[adb + t];
-				mant[t] = madbt;
+				i_i_unit_t& madbt = mantissa_[adb + t];
+				mantissa_[t] = madbt;
 				madbt = 0;
 			}
 		}
-		mant.resize(n - adb);
+		mantissa_.resize(n - adb);
 	}
 	else if (!x);
 	else {
-		mant.resize(n + adb + 1);
+		mantissa_.resize(n + adb + 1);
 		if (amb) {
 			for (t = 0; t < n; t++) {
 				i_i_unit_t
-					& mzadbt = mant[n - 1 + adb - t],
-					& mzadbt1 = mant[n - 1 + adb - t + 1],
-					& mzt = mant[n - 1 - t];
+					& mzadbt = mantissa_[n - 1 + adb - t],
+					& mzadbt1 = mantissa_[n - 1 + adb - t + 1],
+					& mzt = mantissa_[n - 1 - t];
 				const i_i_unit_t temp = mzt;
 				mzt = 0;
 				mzadbt1 |= (temp >> bamb) & ((1 << amb) - 1);
@@ -389,13 +389,13 @@ ZZ& ZZ::operator<<=(const intmax_t& x) {
 		}
 		else {
 			for (t = 0; t < n; t++) {
-				i_i_unit_t& mzt = mant[n - 1 - t];
-				mant[n - 1 - t + adb] = mzt;
+				i_i_unit_t& mzt = mantissa_[n - 1 - t];
+				mantissa_[n - 1 - t + adb] = mzt;
 				mzt = 0;
 			}
 		}
 	}
-	mant.shorten();
+	mantissa_.shorten();
 	return*this;
 }
 ZZ& ZZ::operator>>=(const intmax_t& x) {
@@ -415,9 +415,9 @@ ZZ& ZZ::operator*=(const ZZ& x) {
 		ii = it,
 		jt = x.mantissa().end();
 	i_digits::iterator
-		iitt = mant.begin(),
+		iitt = mantissa_.begin(),
 		iiii = iitt,
-		jjtt = mant.end();
+		jjtt = mantissa_.end();
 	const auto b = sizeof(*it) * 8;
 	ZZ temp = *this;
 	while (iitt < jjtt)
@@ -433,7 +433,7 @@ ZZ& ZZ::operator*=(const ZZ& x) {
 		it++;
 	}
 	sign = sign != x.sign;
-	mant.shorten();
+	mantissa_.shorten();
 	return*this;
 }
 ZZ ZZ::operator*(const ZZ& x)const {
@@ -491,7 +491,7 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 		size_t
 			dn0 = b - 1,
 			dnx = b - 1;
-		while (!(mant.back() & (1 << dn0)))
+		while (!(mantissa_.back() & (1 << dn0)))
 			dn0--;
 		while (!(a.mantissa().back() & (1 << dnx)))
 			dnx--;
@@ -501,8 +501,8 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 		if (this->operator<(a << temp))
 			temp--;
 		quotient_here |= ZZ(1) << temp;
-		mant.z_diff((a << temp).mantissa());
-		mant.shorten();
+		mantissa_.z_diff((a << temp).mantissa());
+		mantissa_.shorten();
 	}
 	// 10001/10000=1+1/10000
 	// -10001/10000=-1-1/10000=-2+9999/10000
@@ -513,7 +513,7 @@ ZZ& ZZ::QR(const ZZ& x, ZZ& quotient_here) {
 		quotient_here -= 1;
 		operator+=(x);
 	}
-	mant.shorten();
+	mantissa_.shorten();
 	return*this;
 }
 ZZ ZZ::operator/=(const ZZ& x) {

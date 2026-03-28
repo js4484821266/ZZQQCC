@@ -11,14 +11,12 @@ using i_i_unit_t = unsigned int;
 class i_digits : public std::vector<i_i_unit_t>
 {
 public:
-	//Reduces length of this so that save more space.
-	void shorten(void)
+	//Shortens this.
+	void shorten()
 	{
-		while (size() > 1)
-			if (!back())
-				pop_back();
-			else
-				break;
+		auto n = size() - 1;
+		while (!operator[](n))--n;
+		resize(n + 1);
 	}
 
 	//Adds x to this.
@@ -27,14 +25,14 @@ public:
 	//Checks if x is greater than this.
 	bool operator<(const i_digits&) const;
 
-	//Takes difference of this and x.
+	//Takes difference between this and x.
 	i_digits& z_diff(i_digits);
 };
 
-i_digits& i_digits::z_add(const i_digits& x)
+inline i_digits& i_digits::z_add(const i_digits& x)
 {
 	constexpr auto
-		nbits = sizeof(i_i_unit_t) * 8;
+		n_bits = sizeof(i_i_unit_t) * 8;
 	const auto
 		n = size(),
 		xn = x.size();
@@ -46,21 +44,21 @@ i_digits& i_digits::z_add(const i_digits& x)
 		t++
 	)
 	{
-		auto& pt = at(t);
-		auto& xpt = x.at(t);
+		auto& l_digit = at(t);
+		auto& r_digit = x.at(t);
 		const auto
-			eaxn = pt & xpt,
-			eaxo = pt | xpt;
-		pt += xpt;
+			l_and_r = l_digit & r_digit,
+			l_or_r = l_digit | r_digit;
+		l_digit += r_digit;
 		for (
 			size_t i = 0;
-			i < nbits;
+			i < n_bits;
 			i++
 		)
 		{
-			if (!(eaxo & (1 << (nbits - 1 - i))))
+			if (!(l_or_r & (1 << (n_bits - 1 - i))))
 				break;
-			if (eaxn & (1 << (nbits - 1 - i)))
+			if (l_and_r & (1 << (n_bits - 1 - i)))
 			{
 				i_digits j;
 				j.resize(t + 1);

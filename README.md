@@ -4,7 +4,7 @@ A C++ library implementing `ZZ`, an arbitrary-precision integer class.
 
 ## Overview
 
-`ZZ` represents integers of arbitrary size. The name is inspired by the blackboard bold **ℤ** (the set of all integers). Internally, digits are stored in a base-2^(8·sizeof(unsigned int)) positional system using the helper class `i_digits`.
+`ZZ` represents integers of arbitrary size. The name is inspired by the blackboard bold **ℤ** (the set of all integers). Internally, digits are stored in a `base-2^(8·sizeof(unsigned int))` positional system using the helper class `i_digits`.
 
 ## Files
 
